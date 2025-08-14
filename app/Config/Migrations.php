@@ -46,5 +46,5 @@ class Migrations extends BaseConfig
      * - Y-m-d-His_
      * - Y_m_d_His_
      */
-    public string $timestampFormat = 'sequential';
+    public string $timestampFormat = 'Y_m_d_His';
 }
