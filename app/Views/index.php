@@ -1,12 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Homepage</title>
-</head>
-<body>
-    <h1>Welcome to Homepage</h1>
-    <a href="<?= base_url('/') ?>">Home</a> |
-    <a href="<?= base_url('about') ?>">About</a> |
-    <a href="<?= base_url('contact') ?>">Contact</a>
-</body>
-</html>
+<?= $this->extend('template') ?>
+
+<?= $this->section('content') ?>
+    <h1 class="mb-3">Welcome to Pacis Home Page!</h1>
+    <p class="lead">This page is using a Bootstrap template Pacis.</p>
+<?= $this->endSection() ?>
