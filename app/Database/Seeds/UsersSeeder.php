@@ -23,6 +23,13 @@ class UsersSeeder extends Seeder
                 'role'     => 'student',
                 'created_at' => date('Y-m-d H:i:s')
             ],
+            [
+                'username' => 'instructor',
+                'email'    => 'instructor@example.com',
+                'password' => password_hash('123456', PASSWORD_DEFAULT),
+                'role'     => 'instructor',
+                'created_at' => date('Y-m-d H:i:s')
+            ],
         ];
 
         $this->db->table('users')->insertBatch($data);
