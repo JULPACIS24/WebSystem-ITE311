@@ -22,6 +22,7 @@ class CreateUsersTable extends Migration
             'email' => [
                 'type'       => 'VARCHAR',
                 'constraint' => '150',
+                'unique'     => true,
             ],
             'password' => [
                 'type'       => 'VARCHAR',
