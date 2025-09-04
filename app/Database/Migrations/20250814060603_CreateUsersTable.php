@@ -11,11 +11,11 @@ class CreateUsersTable extends Migration
         $this->forge->addField([
             'id'       => [
                 'type'           => 'INT',
-                'constraint'     => 11,
+                'constraint'     => 5,
                 'unsigned'       => true,
                 'auto_increment' => true,
             ],
-            'username' => [
+            'name' => [
                 'type'       => 'VARCHAR',
                 'constraint' => '100',
             ],
@@ -42,12 +42,12 @@ class CreateUsersTable extends Migration
                 'null' => true,
             ],
         ]);
-        $this->forge->addKey('id', true);
-        $this->forge->createTable('users', true, ['ENGINE' => 'InnoDB']);
+        $this->forge->addPrimaryKey('id');
+        $this->forge->createTable('users');
     }
 
     public function down()
     {
-        $this->forge->dropTable('users', true);
+        $this->forge->dropTable('users');
     }
 }
