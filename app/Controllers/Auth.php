@@ -1,96 +1,108 @@
 <?php
 
 namespace App\Controllers;
-
 use App\Models\UserModel;
 
 class Auth extends BaseController
 {
     public function register()
     {
-        helper(['form']);
+        helper(['form', 'url']);
+        $data = [];
 
-        if ($this->request->getMethod() === 'post') {
+        if ($this->request->getMethod() == 'POST') {
             $rules = [
-                'username'         => 'required|min_length[3]|max_length[20]',
-                'email'            => 'required|valid_email|is_unique[users.email]',
-                'password'         => 'required|min_length[6]',
-                'password_confirm' => 'matches[password]'
+                'name'     => 'required|min_length[2]|max_length[100]',
+                'email'    => 'required|valid_email|max_length[100]|is_unique[users.email]',
+                'password' => 'required|min_length[6]',
             ];
 
-            if ($this->validate($rules)) {
+            if (!$this->validate($rules)) {
+                $data['validation'] = $this->validator;
+            } else {
                 $model = new UserModel();
 
-                $data = [
-                    'name'     => $this->request->getPost('username'),
-                    'email'    => $this->request->getPost('email'),
+                $newData = [
+                    'name'     => trim($this->request->getPost('name')),
+                    'email'    => trim($this->request->getPost('email')),
                     'password' => password_hash($this->request->getPost('password'), PASSWORD_DEFAULT),
-                    'role'     => 'user',
+                    'role'     => 'student'
                 ];
 
-                $model->save($data);
-
-                return redirect()->to('/login')->with('success', 'Registration successful. You can now log in.');
-            } else {
-                return view('auth/register', [
-                    'validation' => $this->validator
-                ]);
+                try {
+                    $result = $model->insert($newData);
+                    
+                    if ($result) {
+                        session()->setFlashdata('success', 'Registration successful!');
+                        return redirect()->to('/login');
+                    } else {
+                        $errors = $model->errors();
+                        session()->setFlashdata('error', 'Registration failed: ' . implode(', ', $errors));
+                    }
+                } catch (\Exception $e) {
+                    session()->setFlashdata('error', 'Database error: ' . $e->getMessage());
+                }
             }
         }
 
-        return view('auth/register');
+        return view('auth/register', $data);
     }
 
     public function login()
     {
-        helper(['form']);
+        helper(['form', 'url']);
+        $data = [];
 
-        if ($this->request->getMethod() === 'post') {
+        if ($this->request->getMethod() == 'POST') {
             $rules = [
                 'email'    => 'required|valid_email',
                 'password' => 'required|min_length[6]',
             ];
 
-            if ($this->validate($rules)) {
+            if (!$this->validate($rules)) {
+                $data['validation'] = $this->validator;
+            } else {
                 $model = new UserModel();
                 $user = $model->where('email', $this->request->getPost('email'))->first();
 
-                if ($user && password_verify($this->request->getPost('password'), $user['password'])) {
-                    $this->setUserSession($user);
-                    return redirect()->to('/dashboard');
+                if ($user) {
+                    if (password_verify($this->request->getPost('password'), $user['password'])) {
+                        $sessionData = [
+                            'id'        => $user['id'],
+                            'name'      => $user['name'],
+                            'email'     => $user['email'],
+                            'isLoggedIn'=> true,
+                        ];
+                        session()->set($sessionData);
+
+                        return redirect()->to('/dashboard');
+                    } else {
+                        session()->setFlashdata('error', 'Wrong password.');
+                        return redirect()->to('/login');
+                    }
                 } else {
-                    return redirect()->back()->with('error', 'Invalid login credentials');
+                    session()->setFlashdata('error', 'Email not found.');
+                    return redirect()->to('/login');
                 }
             }
         }
 
-        return view('auth/login');
-    }
-
-    private function setUserSession($user)
-    {
-        $data = [
-            'id'       => $user['id'],
-            'username' => $user['username'], // gumamit ng "name" kasi yun nasa db
-            'email'    => $user['email'],
-            'role'     => $user['role'],
-            'isLoggedIn' => true,
-        ];
-        session()->set($data);
-        return true;
+        return view('auth/login', $data);
     }
 
     public function logout()
     {
         session()->destroy();
-        return redirect()->to('/login');
+        return redirect()->to('/');
     }
 
     public function dashboard()
     {
-        if (! session()->get('isLoggedIn')) {
+        // Check if user is logged in
+        if (!session()->get('isLoggedIn')) {
             return redirect()->to('/login');
         }
-        return view('auth/dashboard');
+
+        return view('dashboard');
     }
 }
