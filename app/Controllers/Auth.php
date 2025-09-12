@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Controllers;
-use App\Models\UserModel;
 
 class Auth extends BaseController
 {
@@ -14,30 +13,32 @@ class Auth extends BaseController
             $rules = [
                 'name'     => 'required|min_length[2]|max_length[100]',
                 'email'    => 'required|valid_email|max_length[100]|is_unique[users.email]',
-                'password' => 'required|min_length[6]',
+                'password' => 'required|min_length[3]',
             ];
 
             if (!$this->validate($rules)) {
                 $data['validation'] = $this->validator;
             } else {
-                $model = new UserModel();
+                $db      = \Config\Database::connect();
+                $builder = $db->table('users');
 
                 $newData = [
                     'name'     => trim($this->request->getPost('name')),
                     'email'    => trim($this->request->getPost('email')),
                     'password' => password_hash($this->request->getPost('password'), PASSWORD_DEFAULT),
-                    'role'     => 'student'
+                    'role'     => 'student',
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'updated_at' => date('Y-m-d H:i:s'),
                 ];
 
                 try {
-                    $result = $model->insert($newData);
-                    
+                    $result = $builder->insert($newData);
+
                     if ($result) {
                         session()->setFlashdata('success', 'Registration successful!');
                         return redirect()->to('/login');
                     } else {
-                        $errors = $model->errors();
-                        session()->setFlashdata('error', 'Registration failed: ' . implode(', ', $errors));
+                        session()->setFlashdata('error', 'Registration failed.');
                     }
                 } catch (\Exception $e) {
                     session()->setFlashdata('error', 'Database error: ' . $e->getMessage());
@@ -56,14 +57,15 @@ class Auth extends BaseController
         if ($this->request->getMethod() == 'POST') {
             $rules = [
                 'email'    => 'required|valid_email',
-                'password' => 'required|min_length[6]',
+                'password' => 'required|min_length[3]',
             ];
 
             if (!$this->validate($rules)) {
                 $data['validation'] = $this->validator;
             } else {
-                $model = new UserModel();
-                $user = $model->where('email', $this->request->getPost('email'))->first();
+                $db      = \Config\Database::connect();
+                $builder = $db->table('users');
+                $user    = $builder->where('email', $this->request->getPost('email'))->get()->getRowArray();
 
                 if ($user) {
                     if (password_verify($this->request->getPost('password'), $user['password'])) {
@@ -71,6 +73,7 @@ class Auth extends BaseController
                             'id'        => $user['id'],
                             'name'      => $user['name'],
                             'email'     => $user['email'],
+                            'role'      => $user['role'],
                             'isLoggedIn'=> true,
                         ];
                         session()->set($sessionData);
@@ -98,11 +101,15 @@ class Auth extends BaseController
 
     public function dashboard()
     {
-        // Check if user is logged in
         if (!session()->get('isLoggedIn')) {
             return redirect()->to('/login');
         }
 
-        return view('dashboard');
+        $data = [
+            'name' => session()->get('name'),
+            'role' => session()->get('role'),
+        ];
+
+        return view('dashboard', $data);
     }
 }

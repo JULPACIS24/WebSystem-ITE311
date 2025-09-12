@@ -10,25 +10,28 @@ class UsersSeeder extends Seeder
     {
         $data = [
             [
-                'username' => 'admin',
-                'email'    => 'admin@example.com',
+                'name' => 'admin',
+                'email' => 'admin@example.com',
                 'password' => password_hash('admin123', PASSWORD_DEFAULT),
-                'role'     => 'admin',
-                'created_at' => date('Y-m-d H:i:s')
+                'role' => 'admin',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
             ],
             [
-                'username' => 'student1',
-                'email'    => 'student1@example.com',
+                'name' => 'student1',
+                'email' => 'student1@example.com',
                 'password' => password_hash('123456', PASSWORD_DEFAULT),
-                'role'     => 'student',
-                'created_at' => date('Y-m-d H:i:s')
+                'role' => 'user',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
             ],
             [
-                'username' => 'instructor',
-                'email'    => 'instructor@example.com',
+                'name' => 'instructor',
+                'email' => 'instructor@example.com',
                 'password' => password_hash('123456', PASSWORD_DEFAULT),
-                'role'     => 'instructor',
-                'created_at' => date('Y-m-d H:i:s')
+                'role' => 'user',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
             ],
         ];
 

@@ -6,7 +6,7 @@
 
     <?php if (!session()->get('isLoggedIn')): ?>
                 <div class="mt-4">
-                    <a href="<?= site_url('/register') ?>" class="btn btn-primary me-2">Get Started - Register</a>
+                    <a href="<?= site_url('/register') ?>" class="btn btn-primary me-2">Register</a>
                     <a href="<?= site_url('/login') ?>" class="btn btn-outline-primary">Login</a>
                 </div>
             <?php else: ?>

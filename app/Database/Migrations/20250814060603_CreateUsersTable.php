@@ -42,7 +42,7 @@ class CreateUsersTable extends Migration
                 'null' => true,
             ],
         ]);
-        $this->forge->addPrimaryKey('id', true);
+        $this->forge->addKey('id', true);
         $this->forge->createTable('users', true);
     }
 
