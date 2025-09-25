@@ -12,4 +12,8 @@
     <div class="alert alert-warning">Student Dashboard Content</div>
 <?php endif; ?>
 
+<div class="mt-4">
+    <a href="<?= site_url('/logout') ?>" class="btn btn-danger">Logout</a>
+</div>
+
 <?= $this->endSection() ?>
