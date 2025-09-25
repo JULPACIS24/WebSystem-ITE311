@@ -1,4 +1,4 @@
-<?= $this->extend('template') ?>
+<?= $this->extend('templates/template') ?>
 
 <?= $this->section('content') ?>
     <h1 class="mb-3">Contact Page</h1>

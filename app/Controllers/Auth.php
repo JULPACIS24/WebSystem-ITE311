@@ -14,6 +14,8 @@ class Auth extends BaseController
                 'name'     => 'required|min_length[2]|max_length[100]',
                 'email'    => 'required|valid_email|max_length[100]|is_unique[users.email]',
                 'password' => 'required|min_length[3]',
+                'password_confirm' => 'required|matches[password]',
+
             ];
 
             if (!$this->validate($rules)) {
@@ -110,6 +112,6 @@ class Auth extends BaseController
             'role' => session()->get('role'),
         ];
 
-        return view('dashboard', $data);
+        return view('auth/dashboard', $data);
     }
 }
