@@ -15,14 +15,14 @@
 </head>
 <body>
 
-    <!-- Include separate header -->
+ 
     <?= $this->include('templates/header') ?>
 
     <div class="container">
         <?= $this->renderSection('content') ?>
     </div>
 
-    
+
 
 <div class="container">
     <?= $this->renderSection('content') ?>
