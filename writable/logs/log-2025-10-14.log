@@ -1,0 +1,285 @@
+CRITICAL - 2025-10-14 13:50:35 --> ErrorException: Undefined variable $availableCourses
+[Method: GET, Route: dashboard]
+in APPPATH\Views\auth\dashboard.php on line 26.
+ 1 APPPATH\Views\auth\dashboard.php(26): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined variable $availableCourses', 'D:\\JUL\\xampp\\htdocs\\ITE311-PACIS\\app\\Views\\auth\\dashboard.php', 26)
+ 2 SYSTEMPATH\View\View.php(226): include('D:\\JUL\\xampp\\htdocs\\ITE311-PACIS\\app\\Views\\auth\\dashboard.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('auth/dashboard', [], true)
+ 5 APPPATH\Controllers\Auth.php(131): view('auth/dashboard', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Auth->dashboard()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Auth))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(60): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+12 SYSTEMPATH\rewrite.php(44): require_once('D:\\JUL\\xampp\\htdocs\\ITE311-PACIS\\index.php')
+CRITICAL - 2025-10-14 13:58:02 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "dashboard.php"
+[Method: GET, Route: dashboard]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('dashboard.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('dashboard', [], true)
+ 3 APPPATH\Controllers\Auth.php(131): view('dashboard', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Auth->dashboard()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Auth))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(60): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+10 SYSTEMPATH\rewrite.php(44): require_once('D:\\JUL\\xampp\\htdocs\\ITE311-PACIS\\index.php')
+CRITICAL - 2025-10-14 13:58:05 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "dashboard.php"
+[Method: GET, Route: dashboard]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('dashboard.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('dashboard', [], true)
+ 3 APPPATH\Controllers\Auth.php(131): view('dashboard', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Auth->dashboard()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Auth))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(60): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+10 SYSTEMPATH\rewrite.php(44): require_once('D:\\JUL\\xampp\\htdocs\\ITE311-PACIS\\index.php')
+CRITICAL - 2025-10-14 13:58:05 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "dashboard.php"
+[Method: GET, Route: dashboard]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('dashboard.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('dashboard', [], true)
+ 3 APPPATH\Controllers\Auth.php(131): view('dashboard', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Auth->dashboard()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Auth))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(60): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+10 SYSTEMPATH\rewrite.php(44): require_once('D:\\JUL\\xampp\\htdocs\\ITE311-PACIS\\index.php')
+CRITICAL - 2025-10-14 13:58:06 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "dashboard.php"
+[Method: GET, Route: dashboard]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('dashboard.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('dashboard', [], true)
+ 3 APPPATH\Controllers\Auth.php(131): view('dashboard', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Auth->dashboard()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Auth))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(60): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+10 SYSTEMPATH\rewrite.php(44): require_once('D:\\JUL\\xampp\\htdocs\\ITE311-PACIS\\index.php')
+CRITICAL - 2025-10-14 13:58:06 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "dashboard.php"
+[Method: GET, Route: dashboard]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('dashboard.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('dashboard', [], true)
+ 3 APPPATH\Controllers\Auth.php(131): view('dashboard', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Auth->dashboard()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Auth))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(60): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+10 SYSTEMPATH\rewrite.php(44): require_once('D:\\JUL\\xampp\\htdocs\\ITE311-PACIS\\index.php')
+CRITICAL - 2025-10-14 13:58:07 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "dashboard.php"
+[Method: GET, Route: dashboard]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('dashboard.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('dashboard', [], true)
+ 3 APPPATH\Controllers\Auth.php(131): view('dashboard', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Auth->dashboard()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Auth))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(60): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+10 SYSTEMPATH\rewrite.php(44): require_once('D:\\JUL\\xampp\\htdocs\\ITE311-PACIS\\index.php')
+CRITICAL - 2025-10-14 13:58:07 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "dashboard.php"
+[Method: GET, Route: dashboard]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('dashboard.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('dashboard', [], true)
+ 3 APPPATH\Controllers\Auth.php(131): view('dashboard', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Auth->dashboard()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Auth))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(60): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+10 SYSTEMPATH\rewrite.php(44): require_once('D:\\JUL\\xampp\\htdocs\\ITE311-PACIS\\index.php')
+CRITICAL - 2025-10-14 13:58:07 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "dashboard.php"
+[Method: GET, Route: dashboard]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('dashboard.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('dashboard', [], true)
+ 3 APPPATH\Controllers\Auth.php(131): view('dashboard', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Auth->dashboard()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Auth))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(60): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+10 SYSTEMPATH\rewrite.php(44): require_once('D:\\JUL\\xampp\\htdocs\\ITE311-PACIS\\index.php')
+CRITICAL - 2025-10-14 14:01:00 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "dashboard.php"
+[Method: GET, Route: dashboard]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('dashboard.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('dashboard', [], true)
+ 3 APPPATH\Controllers\Auth.php(131): view('dashboard', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Auth->dashboard()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Auth))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(60): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+10 SYSTEMPATH\rewrite.php(44): require_once('D:\\JUL\\xampp\\htdocs\\ITE311-PACIS\\index.php')
+CRITICAL - 2025-10-14 14:01:01 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "dashboard.php"
+[Method: GET, Route: dashboard]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('dashboard.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('dashboard', [], true)
+ 3 APPPATH\Controllers\Auth.php(131): view('dashboard', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Auth->dashboard()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Auth))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(60): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+10 SYSTEMPATH\rewrite.php(44): require_once('D:\\JUL\\xampp\\htdocs\\ITE311-PACIS\\index.php')
+CRITICAL - 2025-10-14 14:01:01 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "dashboard.php"
+[Method: GET, Route: dashboard]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('dashboard.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('dashboard', [], true)
+ 3 APPPATH\Controllers\Auth.php(131): view('dashboard', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Auth->dashboard()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Auth))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(60): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+10 SYSTEMPATH\rewrite.php(44): require_once('D:\\JUL\\xampp\\htdocs\\ITE311-PACIS\\index.php')
+CRITICAL - 2025-10-14 14:01:06 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "dashboard.php"
+[Method: GET, Route: dashboard]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('dashboard.php')
+ 2 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('dashboard', [], true)
+ 3 APPPATH\Controllers\Auth.php(131): view('dashboard', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Auth->dashboard()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Auth))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(60): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+10 SYSTEMPATH\rewrite.php(44): require_once('D:\\JUL\\xampp\\htdocs\\ITE311-PACIS\\index.php')
+ERROR - 2025-10-14 14:04:07 --> mysqli_sql_exception: Unknown column 'enrollment_date' in 'field list' in D:\JUL\xampp\htdocs\ITE311-PACIS\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 D:\JUL\xampp\htdocs\ITE311-PACIS\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `en...', 0)
+#1 D:\JUL\xampp\htdocs\ITE311-PACIS\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `en...')
+#2 D:\JUL\xampp\htdocs\ITE311-PACIS\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `en...')
+#3 D:\JUL\xampp\htdocs\ITE311-PACIS\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `en...', Array, false)
+#4 D:\JUL\xampp\htdocs\ITE311-PACIS\system\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+#5 D:\JUL\xampp\htdocs\ITE311-PACIS\system\BaseModel.php(838): CodeIgniter\Model->doInsert(Array)
+#6 D:\JUL\xampp\htdocs\ITE311-PACIS\system\Model.php(797): CodeIgniter\BaseModel->insert(Array, true)
+#7 D:\JUL\xampp\htdocs\ITE311-PACIS\app\Models\EnrollmentModel.php(16): CodeIgniter\Model->insert(Array)
+#8 D:\JUL\xampp\htdocs\ITE311-PACIS\app\Controllers\Course.php(31): App\Models\EnrollmentModel->enrollUser(Array)
+#9 D:\JUL\xampp\htdocs\ITE311-PACIS\system\CodeIgniter.php(933): App\Controllers\Course->enroll()
+#10 D:\JUL\xampp\htdocs\ITE311-PACIS\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Course))
+#11 D:\JUL\xampp\htdocs\ITE311-PACIS\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#12 D:\JUL\xampp\htdocs\ITE311-PACIS\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#13 D:\JUL\xampp\htdocs\ITE311-PACIS\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#14 D:\JUL\xampp\htdocs\ITE311-PACIS\index.php(60): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#15 D:\JUL\xampp\htdocs\ITE311-PACIS\system\rewrite.php(44): require_once('D:\\JUL\\xampp\\ht...')
+#16 {main}
+ERROR - 2025-10-14 14:04:13 --> mysqli_sql_exception: Unknown column 'enrollment_date' in 'field list' in D:\JUL\xampp\htdocs\ITE311-PACIS\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 D:\JUL\xampp\htdocs\ITE311-PACIS\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `en...', 0)
+#1 D:\JUL\xampp\htdocs\ITE311-PACIS\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `en...')
+#2 D:\JUL\xampp\htdocs\ITE311-PACIS\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `en...')
+#3 D:\JUL\xampp\htdocs\ITE311-PACIS\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `en...', Array, false)
+#4 D:\JUL\xampp\htdocs\ITE311-PACIS\system\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+#5 D:\JUL\xampp\htdocs\ITE311-PACIS\system\BaseModel.php(838): CodeIgniter\Model->doInsert(Array)
+#6 D:\JUL\xampp\htdocs\ITE311-PACIS\system\Model.php(797): CodeIgniter\BaseModel->insert(Array, true)
+#7 D:\JUL\xampp\htdocs\ITE311-PACIS\app\Models\EnrollmentModel.php(16): CodeIgniter\Model->insert(Array)
+#8 D:\JUL\xampp\htdocs\ITE311-PACIS\app\Controllers\Course.php(31): App\Models\EnrollmentModel->enrollUser(Array)
+#9 D:\JUL\xampp\htdocs\ITE311-PACIS\system\CodeIgniter.php(933): App\Controllers\Course->enroll()
+#10 D:\JUL\xampp\htdocs\ITE311-PACIS\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Course))
+#11 D:\JUL\xampp\htdocs\ITE311-PACIS\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#12 D:\JUL\xampp\htdocs\ITE311-PACIS\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#13 D:\JUL\xampp\htdocs\ITE311-PACIS\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#14 D:\JUL\xampp\htdocs\ITE311-PACIS\index.php(60): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#15 D:\JUL\xampp\htdocs\ITE311-PACIS\system\rewrite.php(44): require_once('D:\\JUL\\xampp\\ht...')
+#16 {main}
+ERROR - 2025-10-14 14:15:05 --> mysqli_sql_exception: Unknown column 'enrollment_date' in 'field list' in D:\JUL\xampp\htdocs\ITE311-PACIS\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 D:\JUL\xampp\htdocs\ITE311-PACIS\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `en...', 0)
+#1 D:\JUL\xampp\htdocs\ITE311-PACIS\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `en...')
+#2 D:\JUL\xampp\htdocs\ITE311-PACIS\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `en...')
+#3 D:\JUL\xampp\htdocs\ITE311-PACIS\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `en...', Array, false)
+#4 D:\JUL\xampp\htdocs\ITE311-PACIS\system\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+#5 D:\JUL\xampp\htdocs\ITE311-PACIS\system\BaseModel.php(838): CodeIgniter\Model->doInsert(Array)
+#6 D:\JUL\xampp\htdocs\ITE311-PACIS\system\Model.php(797): CodeIgniter\BaseModel->insert(Array, true)
+#7 D:\JUL\xampp\htdocs\ITE311-PACIS\app\Models\EnrollmentModel.php(16): CodeIgniter\Model->insert(Array)
+#8 D:\JUL\xampp\htdocs\ITE311-PACIS\app\Controllers\Course.php(31): App\Models\EnrollmentModel->enrollUser(Array)
+#9 D:\JUL\xampp\htdocs\ITE311-PACIS\system\CodeIgniter.php(933): App\Controllers\Course->enroll()
+#10 D:\JUL\xampp\htdocs\ITE311-PACIS\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Course))
+#11 D:\JUL\xampp\htdocs\ITE311-PACIS\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#12 D:\JUL\xampp\htdocs\ITE311-PACIS\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#13 D:\JUL\xampp\htdocs\ITE311-PACIS\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#14 D:\JUL\xampp\htdocs\ITE311-PACIS\index.php(60): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#15 D:\JUL\xampp\htdocs\ITE311-PACIS\system\rewrite.php(44): require_once('D:\\JUL\\xampp\\ht...')
+#16 {main}
+ERROR - 2025-10-14 14:23:12 --> mysqli_sql_exception: Unknown column 'enrollment_date' in 'field list' in D:\JUL\xampp\htdocs\ITE311-PACIS\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 D:\JUL\xampp\htdocs\ITE311-PACIS\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `en...', 0)
+#1 D:\JUL\xampp\htdocs\ITE311-PACIS\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `en...')
+#2 D:\JUL\xampp\htdocs\ITE311-PACIS\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `en...')
+#3 D:\JUL\xampp\htdocs\ITE311-PACIS\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `en...', Array, false)
+#4 D:\JUL\xampp\htdocs\ITE311-PACIS\system\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+#5 D:\JUL\xampp\htdocs\ITE311-PACIS\system\BaseModel.php(838): CodeIgniter\Model->doInsert(Array)
+#6 D:\JUL\xampp\htdocs\ITE311-PACIS\system\Model.php(797): CodeIgniter\BaseModel->insert(Array, true)
+#7 D:\JUL\xampp\htdocs\ITE311-PACIS\app\Models\EnrollmentModel.php(16): CodeIgniter\Model->insert(Array)
+#8 D:\JUL\xampp\htdocs\ITE311-PACIS\app\Controllers\Course.php(48): App\Models\EnrollmentModel->enrollUser(Array)
+#9 D:\JUL\xampp\htdocs\ITE311-PACIS\system\CodeIgniter.php(933): App\Controllers\Course->enroll()
+#10 D:\JUL\xampp\htdocs\ITE311-PACIS\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Course))
+#11 D:\JUL\xampp\htdocs\ITE311-PACIS\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#12 D:\JUL\xampp\htdocs\ITE311-PACIS\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#13 D:\JUL\xampp\htdocs\ITE311-PACIS\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#14 D:\JUL\xampp\htdocs\ITE311-PACIS\index.php(60): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#15 D:\JUL\xampp\htdocs\ITE311-PACIS\system\rewrite.php(44): require_once('D:\\JUL\\xampp\\ht...')
+#16 {main}
+ERROR - 2025-10-14 14:23:35 --> mysqli_sql_exception: Unknown column 'enrollment_date' in 'field list' in D:\JUL\xampp\htdocs\ITE311-PACIS\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 D:\JUL\xampp\htdocs\ITE311-PACIS\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `en...', 0)
+#1 D:\JUL\xampp\htdocs\ITE311-PACIS\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `en...')
+#2 D:\JUL\xampp\htdocs\ITE311-PACIS\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `en...')
+#3 D:\JUL\xampp\htdocs\ITE311-PACIS\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `en...', Array, false)
+#4 D:\JUL\xampp\htdocs\ITE311-PACIS\system\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+#5 D:\JUL\xampp\htdocs\ITE311-PACIS\system\BaseModel.php(838): CodeIgniter\Model->doInsert(Array)
+#6 D:\JUL\xampp\htdocs\ITE311-PACIS\system\Model.php(797): CodeIgniter\BaseModel->insert(Array, true)
+#7 D:\JUL\xampp\htdocs\ITE311-PACIS\app\Models\EnrollmentModel.php(16): CodeIgniter\Model->insert(Array)
+#8 D:\JUL\xampp\htdocs\ITE311-PACIS\app\Controllers\Course.php(48): App\Models\EnrollmentModel->enrollUser(Array)
+#9 D:\JUL\xampp\htdocs\ITE311-PACIS\system\CodeIgniter.php(933): App\Controllers\Course->enroll()
+#10 D:\JUL\xampp\htdocs\ITE311-PACIS\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Course))
+#11 D:\JUL\xampp\htdocs\ITE311-PACIS\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#12 D:\JUL\xampp\htdocs\ITE311-PACIS\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#13 D:\JUL\xampp\htdocs\ITE311-PACIS\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#14 D:\JUL\xampp\htdocs\ITE311-PACIS\index.php(60): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#15 D:\JUL\xampp\htdocs\ITE311-PACIS\system\rewrite.php(44): require_once('D:\\JUL\\xampp\\ht...')
+#16 {main}
+ERROR - 2025-10-14 14:23:42 --> mysqli_sql_exception: Unknown column 'enrollment_date' in 'field list' in D:\JUL\xampp\htdocs\ITE311-PACIS\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 D:\JUL\xampp\htdocs\ITE311-PACIS\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `en...', 0)
+#1 D:\JUL\xampp\htdocs\ITE311-PACIS\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `en...')
+#2 D:\JUL\xampp\htdocs\ITE311-PACIS\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `en...')
+#3 D:\JUL\xampp\htdocs\ITE311-PACIS\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `en...', Array, false)
+#4 D:\JUL\xampp\htdocs\ITE311-PACIS\system\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+#5 D:\JUL\xampp\htdocs\ITE311-PACIS\system\BaseModel.php(838): CodeIgniter\Model->doInsert(Array)
+#6 D:\JUL\xampp\htdocs\ITE311-PACIS\system\Model.php(797): CodeIgniter\BaseModel->insert(Array, true)
+#7 D:\JUL\xampp\htdocs\ITE311-PACIS\app\Models\EnrollmentModel.php(16): CodeIgniter\Model->insert(Array)
+#8 D:\JUL\xampp\htdocs\ITE311-PACIS\app\Controllers\Course.php(48): App\Models\EnrollmentModel->enrollUser(Array)
+#9 D:\JUL\xampp\htdocs\ITE311-PACIS\system\CodeIgniter.php(933): App\Controllers\Course->enroll()
+#10 D:\JUL\xampp\htdocs\ITE311-PACIS\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Course))
+#11 D:\JUL\xampp\htdocs\ITE311-PACIS\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#12 D:\JUL\xampp\htdocs\ITE311-PACIS\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#13 D:\JUL\xampp\htdocs\ITE311-PACIS\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#14 D:\JUL\xampp\htdocs\ITE311-PACIS\index.php(60): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#15 D:\JUL\xampp\htdocs\ITE311-PACIS\system\rewrite.php(44): require_once('D:\\JUL\\xampp\\ht...')
+#16 {main}

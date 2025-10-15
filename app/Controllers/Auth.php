@@ -2,8 +2,13 @@
 
 namespace App\Controllers;
 
+use App\Models\EnrollmentModel;
+use App\Models\CourseModel;
+use CodeIgniter\Controller;
+
 class Auth extends BaseController
 {
+    // 🔹 REGISTER
     public function register()
     {
         helper(['form', 'url']);
@@ -15,7 +20,6 @@ class Auth extends BaseController
                 'email'    => 'required|valid_email|max_length[100]|is_unique[users.email]',
                 'password' => 'required|min_length[3]',
                 'password_confirm' => 'required|matches[password]',
-
             ];
 
             if (!$this->validate($rules)) {
@@ -25,23 +29,18 @@ class Auth extends BaseController
                 $builder = $db->table('users');
 
                 $newData = [
-                    'name'     => trim($this->request->getPost('name')),
-                    'email'    => trim($this->request->getPost('email')),
-                    'password' => password_hash($this->request->getPost('password'), PASSWORD_DEFAULT),
-                    'role'     => 'student',
-                    'created_at' => date('Y-m-d H:i:s'),
-                    'updated_at' => date('Y-m-d H:i:s'),
+                    'name'        => trim($this->request->getPost('name')),
+                    'email'       => trim($this->request->getPost('email')),
+                    'password'    => password_hash($this->request->getPost('password'), PASSWORD_DEFAULT),
+                    'role'        => 'student', // default role
+                    'created_at'  => date('Y-m-d H:i:s'),
+                    'updated_at'  => date('Y-m-d H:i:s'),
                 ];
 
                 try {
-                    $result = $builder->insert($newData);
-
-                    if ($result) {
-                        session()->setFlashdata('success', 'Registration successful!');
-                        return redirect()->to('/login');
-                    } else {
-                        session()->setFlashdata('error', 'Registration failed.');
-                    }
+                    $builder->insert($newData);
+                    session()->setFlashdata('success', 'Registration successful!');
+                    return redirect()->to('/login');
                 } catch (\Exception $e) {
                     session()->setFlashdata('error', 'Database error: ' . $e->getMessage());
                 }
@@ -51,6 +50,7 @@ class Auth extends BaseController
         return view('auth/register', $data);
     }
 
+    // 🔹 LOGIN
     public function login()
     {
         helper(['form', 'url']);
@@ -72,46 +72,75 @@ class Auth extends BaseController
                 if ($user) {
                     if (password_verify($this->request->getPost('password'), $user['password'])) {
                         $sessionData = [
-                            'id'        => $user['id'],
-                            'name'      => $user['name'],
-                            'email'     => $user['email'],
-                            'role'      => $user['role'],
-                            'isLoggedIn'=> true,
+                            'id'         => $user['id'],
+                            'name'       => $user['name'],
+                            'email'      => $user['email'],
+                            'role'       => $user['role'],
+                            'isLoggedIn' => true,
                         ];
                         session()->set($sessionData);
-
                         return redirect()->to('/dashboard');
                     } else {
                         session()->setFlashdata('error', 'Wrong password.');
-                        return redirect()->to('/login');
                     }
                 } else {
                     session()->setFlashdata('error', 'Email not found.');
-                    return redirect()->to('/login');
                 }
+
+                return redirect()->to('/login');
             }
         }
 
         return view('auth/login', $data);
     }
 
+    // 🔹 LOGOUT
     public function logout()
     {
         session()->destroy();
-        return redirect()->to('/');
+        return redirect()->to('/login');
     }
 
+    // 🔹 DASHBOARD (redirects per role)
     public function dashboard()
     {
-        if (!session()->get('isLoggedIn')) {
+        $session = session();
+        if (!$session->get('isLoggedIn')) {
             return redirect()->to('/login');
         }
 
-        $data = [
-            'name' => session()->get('name'),
-            'role' => session()->get('role'),
-        ];
+        $role = $session->get('role');
+        $name = $session->get('name');
+        $user_id = $session->get('id');
 
-        return view('auth/dashboard', $data);
+        // 🧩 Student Dashboard Logic
+        if ($role === 'student') {
+            $enrollModel = new EnrollmentModel();
+            $courseModel = new CourseModel();
+
+            // Get enrolled courses
+            $enrolledCourses = $enrollModel->getUserEnrollments($user_id);
+            $enrolledIds = array_column($enrolledCourses, 'course_id');
+
+            // Get available courses
+            if (count($enrolledIds) > 0) {
+                $availableCourses = $courseModel->whereNotIn('id', $enrolledIds)->findAll();
+            } else {
+                $availableCourses = $courseModel->findAll();
+            }
+
+            return view('student/dashboard', [
+                'name' => $name,
+                'role' => $role,
+                'enrolledCourses' => $enrolledCourses,
+                'availableCourses' => $availableCourses
+            ]);
+        }
+
+        // 🧩 Admin or Teacher
+        return view('auth/dashboard', [
+            'name' => $name,
+            'role' => $role
+        ]);
     }
 }

@@ -1,0 +1,1 @@
+__ci_last_regenerate|i:1760495077;_ci_previous_url|s:41:"http://localhost:8080/index.php/dashboard";id|s:1:"2";name|s:8:"student1";email|s:20:"student1@example.com";role|s:7:"student";isLoggedIn|b:1;error|s:32:"Already enrolled in this course.";__ci_vars|a:1:{s:5:"error";s:3:"old";}

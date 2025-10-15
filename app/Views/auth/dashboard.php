@@ -6,11 +6,14 @@
 
 <?php if ($role === 'admin'): ?>
     <div class="alert alert-primary">Admin Dashboard Content</div>
+
 <?php elseif ($role === 'teacher'): ?>
     <div class="alert alert-success">Teacher Dashboard Content</div>
+
 <?php elseif ($role === 'student'): ?>
-    <div class="alert alert-warning">Student Dashboard Content</div>
-<?php endif; ?>
+    <div class="alert alert-warning mb-4">Student Dashboard</div>
+<?php endif; ?> <!--
+
 
 <div class="mt-4">
     <a href="<?= site_url('/logout') ?>" class="btn btn-danger">Logout</a>
