@@ -52,47 +52,59 @@ class Auth extends BaseController
 
     // 🔹 LOGIN
     public function login()
-    {
-        helper(['form', 'url']);
-        $data = [];
+{
+    helper(['form', 'url']);
+    $data = [];
 
-        if ($this->request->getMethod() == 'POST') {
-            $rules = [
-                'email'    => 'required|valid_email',
-                'password' => 'required|min_length[3]',
-            ];
+    if ($this->request->getMethod() == 'POST') {
+        $rules = [
+            'email'    => 'required|valid_email',
+            'password' => 'required|min_length[3]',
+        ];
 
-            if (!$this->validate($rules)) {
-                $data['validation'] = $this->validator;
-            } else {
-                $db      = \Config\Database::connect();
-                $builder = $db->table('users');
-                $user    = $builder->where('email', $this->request->getPost('email'))->get()->getRowArray();
+        if (!$this->validate($rules)) {
+            $data['validation'] = $this->validator;
+        } else {
+            $db      = \Config\Database::connect();
+            $builder = $db->table('users');
+            $user    = $builder->where('email', $this->request->getPost('email'))->get()->getRowArray();
 
-                if ($user) {
-                    if (password_verify($this->request->getPost('password'), $user['password'])) {
-                        $sessionData = [
-                            'id'         => $user['id'],
-                            'name'       => $user['name'],
-                            'email'      => $user['email'],
-                            'role'       => $user['role'],
-                            'isLoggedIn' => true,
-                        ];
-                        session()->set($sessionData);
-                        return redirect()->to('/dashboard');
+            if ($user) {
+                if (password_verify($this->request->getPost('password'), $user['password'])) {
+                    $sessionData = [
+                        'id'         => $user['id'],
+                        'name'       => $user['name'],
+                        'email'      => $user['email'],
+                        'role'       => $user['role'],
+                        'isLoggedIn' => true,
+                    ];
+                    session()->set($sessionData);
+
+                    // ✅ Role-based redirection
+                    if ($user['role'] === 'student') {
+                        return redirect()->to('/announcements');
+                    } elseif ($user['role'] === 'teacher') {
+                        return redirect()->to('/teacher/dashboard');
+                    } elseif ($user['role'] === 'admin') {
+                        return redirect()->to('/admin/dashboard');
                     } else {
-                        session()->setFlashdata('error', 'Wrong password.');
+                        return redirect()->to('/dashboard'); // fallback
                     }
+
                 } else {
-                    session()->setFlashdata('error', 'Email not found.');
+                    session()->setFlashdata('error', 'Wrong password.');
                 }
-
-                return redirect()->to('/login');
+            } else {
+                session()->setFlashdata('error', 'Email not found.');
             }
-        }
 
-        return view('auth/login', $data);
+            return redirect()->to('/login');
+        }
     }
+
+    return view('auth/login', $data);
+}
+
 
     // 🔹 LOGOUT
     public function logout()

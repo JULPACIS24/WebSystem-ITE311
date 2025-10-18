@@ -18,6 +18,9 @@ $routes->get('/logout', 'Auth::logout');
 $routes->post('/course/enroll', 'Course::enroll');
 $routes->get('/mycourses', 'Course::index');
 $routes->get('/announcements', 'Announcement::index');
+$routes->get('/teacher/dashboard', 'Teacher::dashboard');
+$routes->get('/admin/dashboard', 'Admin::dashboard');
+
 
 
 
