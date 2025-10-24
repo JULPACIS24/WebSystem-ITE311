@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\EnrollmentModel;
 use App\Models\CourseModel;
+use App\Models\MaterialModel;
 use CodeIgniter\Controller;
 
 class Auth extends BaseController
@@ -52,59 +53,47 @@ class Auth extends BaseController
 
     // 🔹 LOGIN
     public function login()
-{
-    helper(['form', 'url']);
-    $data = [];
+    {
+        helper(['form', 'url']);
+        $data = [];
 
-    if ($this->request->getMethod() == 'POST') {
-        $rules = [
-            'email'    => 'required|valid_email',
-            'password' => 'required|min_length[3]',
-        ];
+        if ($this->request->getMethod() == 'POST') {
+            $rules = [
+                'email'    => 'required|valid_email',
+                'password' => 'required|min_length[3]',
+            ];
 
-        if (!$this->validate($rules)) {
-            $data['validation'] = $this->validator;
-        } else {
-            $db      = \Config\Database::connect();
-            $builder = $db->table('users');
-            $user    = $builder->where('email', $this->request->getPost('email'))->get()->getRowArray();
-
-            if ($user) {
-                if (password_verify($this->request->getPost('password'), $user['password'])) {
-                    $sessionData = [
-                        'id'         => $user['id'],
-                        'name'       => $user['name'],
-                        'email'      => $user['email'],
-                        'role'       => $user['role'],
-                        'isLoggedIn' => true,
-                    ];
-                    session()->set($sessionData);
-
-                    // ✅ Role-based redirection
-                    if ($user['role'] === 'student') {
-                        return redirect()->to('/announcements');
-                    } elseif ($user['role'] === 'teacher') {
-                        return redirect()->to('/teacher/dashboard');
-                    } elseif ($user['role'] === 'admin') {
-                        return redirect()->to('/admin/dashboard');
-                    } else {
-                        return redirect()->to('/dashboard'); // fallback
-                    }
-
-                } else {
-                    session()->setFlashdata('error', 'Wrong password.');
-                }
+            if (!$this->validate($rules)) {
+                $data['validation'] = $this->validator;
             } else {
-                session()->setFlashdata('error', 'Email not found.');
+                $db      = \Config\Database::connect();
+                $builder = $db->table('users');
+                $user    = $builder->where('email', $this->request->getPost('email'))->get()->getRowArray();
+
+                if ($user) {
+                    if (password_verify($this->request->getPost('password'), $user['password'])) {
+                        $sessionData = [
+                            'id'         => $user['id'],
+                            'name'       => $user['name'],
+                            'email'      => $user['email'],
+                            'role'       => $user['role'],
+                            'isLoggedIn' => true,
+                        ];
+                        session()->set($sessionData);
+                        return redirect()->to('/dashboard');
+                    } else {
+                        session()->setFlashdata('error', 'Wrong password.');
+                    }
+                } else {
+                    session()->setFlashdata('error', 'Email not found.');
+                }
+
+                return redirect()->to('/login');
             }
-
-            return redirect()->to('/login');
         }
+
+        return view('auth/login', $data);
     }
-
-    return view('auth/login', $data);
-}
-
 
     // 🔹 LOGOUT
     public function logout()
@@ -113,7 +102,7 @@ class Auth extends BaseController
         return redirect()->to('/login');
     }
 
-    // 🔹 DASHBOARD (redirects per role)
+    // 🔹 DASHBOARD (Redirect by Role)
     public function dashboard()
     {
         $session = session();
@@ -125,34 +114,61 @@ class Auth extends BaseController
         $name = $session->get('name');
         $user_id = $session->get('id');
 
-        // 🧩 Student Dashboard Logic
+        // 🧩 ADMIN DASHBOARD
+        if ($role === 'admin') {
+            $courseModel = new CourseModel();
+            $courses = $courseModel->findAll();
+
+            return view('admin/dashboard', [
+                'name' => $name,
+                'role' => $role,
+                'courses' => $courses
+            ]);
+        }
+
+        // 🧩 TEACHER DASHBOARD
+        if ($role === 'teacher') {
+            $courseModel = new CourseModel();
+            $courses = $courseModel->findAll(); // You can filter teacher-owned courses later
+
+            return view('teacher/dashboard', [
+                'name' => $name,
+                'role' => $role,
+                'courses' => $courses
+            ]);
+        }
+
+        // 🧩 STUDENT DASHBOARD
         if ($role === 'student') {
             $enrollModel = new EnrollmentModel();
             $courseModel = new CourseModel();
+            $materialModel = new MaterialModel();
 
             // Get enrolled courses
             $enrolledCourses = $enrollModel->getUserEnrollments($user_id);
             $enrolledIds = array_column($enrolledCourses, 'course_id');
 
             // Get available courses
-            if (count($enrolledIds) > 0) {
-                $availableCourses = $courseModel->whereNotIn('id', $enrolledIds)->findAll();
-            } else {
-                $availableCourses = $courseModel->findAll();
+            $availableCourses = count($enrolledIds) > 0
+                ? $courseModel->whereNotIn('id', $enrolledIds)->findAll()
+                : $courseModel->findAll();
+
+            // Get materials per course
+            $materials = [];
+            foreach ($enrolledIds as $courseId) {
+                $materials[$courseId] = $materialModel->getMaterialsByCourse($courseId);
             }
 
             return view('student/dashboard', [
                 'name' => $name,
                 'role' => $role,
                 'enrolledCourses' => $enrolledCourses,
-                'availableCourses' => $availableCourses
+                'availableCourses' => $availableCourses,
+                'materials' => $materials
             ]);
         }
 
-        // 🧩 Admin or Teacher
-        return view('auth/dashboard', [
-            'name' => $name,
-            'role' => $role
-        ]);
+        // Default fallback
+        return redirect()->to('/login');
     }
 }

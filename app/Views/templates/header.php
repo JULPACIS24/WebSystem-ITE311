@@ -18,7 +18,7 @@
           <?php if (session()->get('role') === 'admin'): ?>
             <li class="nav-item"><a class="nav-link" href="<?= site_url('/manage-users') ?>">Manage Users</a></li>
           <?php elseif (session()->get('role') === 'teacher'): ?>
-            <li class="nav-item"><a class="nav-link" href="<?= site_url('/upload-lessons') ?>">Upload Lessons</a></li>
+            <li class="nav-item"><a class="nav-link" href="<?= site_url('/teacher/upload') ?>">Upload Lessons</a></li>
           <?php elseif (session()->get('role') === 'student'): ?>
             <li class="nav-item"><a class="nav-link" href="<?= site_url('/mycourses') ?>">My Courses</a></li>
           <?php endif; ?>

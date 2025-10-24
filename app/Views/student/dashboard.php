@@ -39,6 +39,32 @@
     <p class="text-muted">No more available courses to enroll.</p>
 <?php endif; ?>
 
+<!-- ✅ Course Materials Section -->
+<?php if (!empty($materials)): ?>
+    <h4 class="mt-5">📁 Course Materials</h4>
+    <?php foreach ($materials as $courseId => $courseMaterials): ?>
+        <?php if (!empty($courseMaterials)): ?>
+            <div class="card mt-3">
+                <div class="card-header bg-light">
+                    <strong>Course ID: <?= esc($courseId) ?></strong>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group">
+                        <?php foreach ($courseMaterials as $m): ?>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <?= esc($m['file_name']) ?>
+                                <a href="<?= base_url('materials/download/' . $m['id']) ?>" class="btn btn-sm btn-success">Download</a>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+            </div>
+        <?php endif; ?>
+    <?php endforeach; ?>
+<?php else: ?>
+    <p class="text-muted mt-4">No materials available yet.</p>
+<?php endif; ?>
+
 <div class="mt-4">
     <a href="<?= site_url('/logout') ?>" class="btn btn-danger">Logout</a>
 </div>

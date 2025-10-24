@@ -12,44 +12,24 @@ class RoleAuth implements FilterInterface
     {
         $session = session();
 
-        // Check if user is logged in
+        // 🔹 Check login status
         if (!$session->get('isLoggedIn')) {
-            // Redirect to login page if not logged in
-            if (!str_starts_with($request->getUri()->getPath(), 'login')) {
-                return redirect()->to('/login');
-            }
-            return;
+            return redirect()->to('/login');
         }
 
-        //Clean URI - remove index.php if present
-        $uri = ltrim(str_replace('index.php/', '', $request->getUri()->getPath()), '/');
-        $role = $session->get('role');
-
-
-        //  Role-based access control
-        if ($role === 'admin') {
-            // Admin should only access /admin routes
-            if (!preg_match('#^admin#', $uri)) {
-                return redirect()->to('/admin/dashboard');
-            }
-        } elseif ($role === 'teacher') {
-            // Teacher can only access /teacher routes
-            if (!preg_match('#^teacher#', $uri)) {
-                return redirect()->to('/teacher/dashboard');
-            }
-        } elseif ($role === 'student') {
-            // Student can only access announcements
-            if (!preg_match('#^announcements#', $uri)) {
-                return redirect()->to('/announcements');
+        // 🔹 If role restriction exists (like role:admin)
+        if ($arguments && count($arguments) > 0) {
+            $allowedRole = $arguments[0];
+            if ($session->get('role') !== $allowedRole) {
+                return redirect()->to('/dashboard')->with('error', 'Access denied.');
             }
         }
 
-        // Allow access if matched
-        return;
+        // Continue request if allowed
     }
 
     public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
     {
-        
+        // No action after
     }
 }
