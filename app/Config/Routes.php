@@ -71,6 +71,8 @@ $routes->group('student', ['filter' => 'role:student'], function ($routes) {
     $routes->get('mycourses', 'Course::index');
 });
 
+$routes->get('mycourses', 'Course::index', ['filter' => 'role:student']);
+
 // ====================================================
 // 🧩 MATERIALS ROUTES (shared by all roles)
 // ====================================================

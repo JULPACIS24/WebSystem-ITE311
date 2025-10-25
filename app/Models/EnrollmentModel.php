@@ -19,7 +19,7 @@ class EnrollmentModel extends Model
     // ✅ Fetch all courses a user is enrolled in
     public function getUserEnrollments($user_id)
     {
-        return $this->select('courses.*')
+        return $this->select('courses.*, enrollments.course_id')
                     ->join('courses', 'courses.id = enrollments.course_id')
                     ->where('enrollments.user_id', $user_id)
                     ->findAll();

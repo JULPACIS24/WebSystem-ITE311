@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\MaterialModel;
 use App\Models\EnrollmentModel;
+use App\Models\CourseModel;
 use CodeIgniter\Controller;
 
 class Materials extends Controller
@@ -19,58 +20,88 @@ class Materials extends Controller
 
     // 📤 Upload material
     public function upload($course_id = null)
-{
-    helper(['form', 'url', 'filesystem']);
+    {
+        helper(['form', 'url', 'filesystem']);
 
-    // ✅ Always pass course_id to the view (even if null)
-    if ($this->request->getMethod() !== 'post') {
-        return view('admin/upload', ['course_id' => $course_id ?? 0]);
-    }
+        $methodOriginal = $this->request->getMethod();
+        $method = strtolower($methodOriginal);
+        log_message('debug', 'Materials::upload accessed | method=' . $methodOriginal . ' | route_course_id=' . ($course_id ?? 'null'));
 
-    // ✅ Validation rules
-    $validationRule = [
-        'material_file' => [
-            'label' => 'File',
-            'rules' => 'uploaded[material_file]|max_size[material_file,10240]|ext_in[material_file,pdf,ppt,pptx,doc,docx]',
-        ],
-    ];
+        $courseModel = new CourseModel();
+        $courses = $courseModel->findAll();
 
-    if (!$this->validate($validationRule)) {
-        return redirect()->back()->with('error', 'Invalid file upload.');
-    }
-
-    $file = $this->request->getFile('material_file');
-
-    if ($file && $file->isValid() && !$file->hasMoved()) {
-        // ✅ Ensure upload directory exists
-        $uploadPath = ROOTPATH . 'public/uploads/materials/';
-        if (!is_dir($uploadPath)) {
-            mkdir($uploadPath, 0777, true);
+        if ($method !== 'post') {
+            return view('admin/upload', [
+                'course_id' => $course_id,
+                'courses'   => $courses,
+            ]);
         }
 
-        // ✅ Move uploaded file
-        $newName = $file->getRandomName();
-        $file->move($uploadPath, $newName);
+        $postedCourseId = $this->request->getPost('course_id');
+        log_message('debug', 'Materials::upload handling POST | method=' . $methodOriginal . ' | route_course_id=' . ($course_id ?? 'null') . ' | posted_course_id=' . ($postedCourseId ?? 'null'));
 
-        // ✅ Prepare database data
-        $data = [
-            'course_id'  => $course_id ?? 0, // fallback if null
-            'file_name'  => $file->getClientName(),
-            'file_path'  => 'uploads/materials/' . $newName,
-            'created_at' => date('Y-m-d H:i:s')
+        $resolvedCourseId = $course_id ?? (int) $postedCourseId;
+        if (!$resolvedCourseId) {
+            log_message('debug', 'Materials::upload missing course_id');
+            return redirect()->back()->withInput()->with('error', 'Please choose a course before uploading.');
+        }
+
+        $validationRule = [
+            'material_file' => [
+                'label' => 'File',
+                'rules' => 'uploaded[material_file]|max_size[material_file,10240]|ext_in[material_file,pdf,ppt,pptx,doc,docx]',
+            ],
         ];
 
-        // ✅ Insert record
-        if ($this->materialModel->insert($data)) {
-            return redirect()->back()->with('success', 'File uploaded successfully!');
-        } else {
-            return redirect()->back()->with('error', 'Database insert failed.');
+        if (!$this->validate($validationRule)) {
+            log_message('debug', 'Materials::upload validation failed | errors=' . json_encode($this->validator->getErrors()));
+            return redirect()->back()->withInput()->with('error', 'Invalid file upload.');
         }
-    } else {
+
+        $file = $this->request->getFile('material_file');
+
+        if ($file && $file->isValid() && !$file->hasMoved()) {
+            log_message('debug', 'Materials::upload file received | client_name=' . $file->getClientName() . ' | size=' . $file->getSize() . ' | mime=' . $file->getClientMimeType());
+
+            $uploadPath = ROOTPATH . 'public/uploads/materials/';
+            if (!is_dir($uploadPath)) {
+                mkdir($uploadPath, 0777, true);
+            }
+
+            $newName = $file->getRandomName();
+            if (!$file->move($uploadPath, $newName)) {
+                log_message('error', 'Material upload: failed moving file. Error: ' . $file->getErrorString());
+                return redirect()->back()->withInput()->with('error', 'Failed to save file on server: ' . $file->getErrorString());
+            }
+
+            log_message('debug', 'Materials::upload file moved | stored_name=' . $newName . ' | path=' . $uploadPath . $newName);
+
+            $data = [
+                'course_id'  => $resolvedCourseId,
+                'file_name'  => $file->getClientName(),
+                'file_path'  => 'uploads/materials/' . $newName,
+                'created_at' => date('Y-m-d H:i:s'),
+            ];
+
+            if ($this->materialModel->insert($data)) {
+                log_message('debug', 'Materials::upload database insert success | data=' . json_encode($data));
+                return redirect()->back()->with('success', 'File uploaded successfully!');
+            }
+
+            $modelErrors = $this->materialModel->errors();
+            $dbError = $this->materialModel->db->error();
+            $errorMessage = !empty($modelErrors)
+                ? implode(', ', $modelErrors)
+                : ($dbError['message'] ?? 'Unknown database error');
+
+            log_message('error', 'Material upload: database insert failed. Data: ' . json_encode($data) . ' | Errors: ' . $errorMessage);
+
+            return redirect()->back()->withInput()->with('error', 'Database insert failed: ' . $errorMessage);
+        }
+
+        log_message('debug', 'Materials::upload request missing valid file');
         return redirect()->back()->with('error', 'File upload failed.');
     }
-}
-
 
     // 🗑 Delete material
     public function delete($material_id)

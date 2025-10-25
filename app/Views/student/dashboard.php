@@ -28,7 +28,7 @@
         <?php foreach ($availableCourses as $course): ?>
             <li class="list-group-item d-flex justify-content-between align-items-center">
                 <?= esc($course['title']) ?>
-                <form action="<?= site_url('/course/enroll') ?>" method="post" class="m-0">
+                <form action="<?= site_url('student/course/enroll') ?>" method="post" class="m-0">
                     <input type="hidden" name="course_id" value="<?= $course['id'] ?>">
                     <button type="submit" class="btn btn-sm btn-primary">Enroll</button>
                 </form>
