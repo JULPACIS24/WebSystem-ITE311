@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Models\NotificationModel;
 use CodeIgniter\Controller;
 use CodeIgniter\HTTP\CLIRequest;
 use CodeIgniter\HTTP\IncomingRequest;
@@ -38,6 +39,11 @@ abstract class BaseController extends Controller
     protected $helpers = [];
 
     /**
+     * @var \CodeIgniter\Session\Session
+     */
+    protected $session;
+
+    /**
      * Be sure to declare properties for any property fetch you initialized.
      * The creation of dynamic property is deprecated in PHP 8.2.
      */
@@ -51,8 +57,19 @@ abstract class BaseController extends Controller
         // Do Not Edit This Line
         parent::initController($request, $response, $logger);
 
-        // Preload any models, libraries, etc, here.
+        $this->session = session();
 
-        // E.g.: $this->session = service('session');
+        $renderer = service('renderer');
+        $renderer->setVar('unreadNotificationsCount', 0);
+
+        if ($this->session->get('isLoggedIn')) {
+            $userId = $this->session->get('id');
+
+            if ($userId !== null) {
+                $notificationModel = new NotificationModel();
+                $unreadCount       = $notificationModel->getUnreadCount((int) $userId);
+                $renderer->setVar('unreadNotificationsCount', $unreadCount);
+            }
+        }
     }
 }
