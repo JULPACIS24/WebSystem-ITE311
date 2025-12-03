@@ -5,6 +5,8 @@ use CodeIgniter\Router\RouteCollection;
 /**
  * @var RouteCollection $routes
  */
+$routes->get('/manage-users', 'ManageUsers::index');
+$routes->match(['get', 'post'], '/add-user', 'ManageUsers::addUser');
 $routes->get('/', 'Home::index');
 $routes->get('/index', 'Home::index');
 $routes->get('/about', 'Home::about');
