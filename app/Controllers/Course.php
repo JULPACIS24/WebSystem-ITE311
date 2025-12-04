@@ -9,41 +9,63 @@ class Course extends BaseController
 {
     public function index()
     {
-        $session = session();
-        $user_id = $session->get('id');
-        $role = $session->get('role');
-
-        $enrollModel = new EnrollmentModel();
-        $courseModel = new CourseModel();
-
-        // Get enrolled courses for this user
-        $enrolledCourses = $enrollModel->getUserEnrollments($user_id);
-
-        return view('student/mycourses', [
-            'role' => $role,
-            'enrolledCourses' => $enrolledCourses
-        ]);
+        // Redirect to unified dashboard where student courses are shown
+        return redirect()->to('/dashboard');
     }
 
     public function enroll()
     {
         $session = session();
-        $user_id = $session->get('id');
+
+        // Must be logged in
+        if (!$session->get('isLoggedIn')) {
+            return $this->response->setJSON([
+                'status'  => 'error',
+                'message' => 'You must be logged in to enroll.'
+            ]);
+        }
+
+        $user_id   = $session->get('id');
         $course_id = $this->request->getPost('course_id');
+
+        if (!$course_id) {
+            return $this->response->setJSON([
+                'status'  => 'error',
+                'message' => 'Invalid course.'
+            ]);
+        }
 
         $enrollModel = new EnrollmentModel();
 
         // Prevent duplicate enrollment
         if ($enrollModel->isAlreadyEnrolled($user_id, $course_id)) {
-            return redirect()->back()->with('error', 'Already enrolled in this course.');
+            return $this->response->setJSON([
+                'status'  => 'error',
+                'message' => 'Already enrolled in this course.'
+            ]);
         }
 
-        $enrollModel->insert([
-            'user_id' => $user_id,
-            'course_id' => $course_id,
-            'enrolled_at' => date('Y-m-d H:i:s')
-        ]);
+        $enrollData = [
+            'user_id'         => $user_id,
+            'course_id'       => $course_id,
+            'enrollment_date' => date('Y-m-d H:i:s'),
+        ];
 
-        return redirect()->to('/dashboard')->with('success', 'Enrolled successfully!');
+        if (!$enrollModel->enrollUser($enrollData)) {
+            return $this->response->setJSON([
+                'status'  => 'error',
+                'message' => 'Failed to enroll in this course.'
+            ]);
+        }
+
+        // Fetch the course details to update UI
+        $courseModel = new CourseModel();
+        $course      = $courseModel->find($course_id);
+
+        return $this->response->setJSON([
+            'status'  => 'success',
+            'message' => 'Enrolled successfully!',
+            'course'  => $course,
+        ]);
     }
 }

@@ -5,8 +5,10 @@ use CodeIgniter\Router\RouteCollection;
 /**
  * @var RouteCollection $routes
  */
-$routes->get('/manage-users', 'ManageUsers::index');
-$routes->match(['get', 'post'], '/add-user', 'ManageUsers::addUser');
+$routes->get('/manage-users', 'Admin::index');
+$routes->match(['get', 'post'], '/add-user', 'Admin::addUser');
+$routes->post('/delete-user/(:num)', 'Admin::deleteUser/$1');
+$routes->post('/update-user-role/(:num)', 'Admin::updateUserRole/$1');
 $routes->get('/', 'Home::index');
 $routes->get('/index', 'Home::index');
 $routes->get('/about', 'Home::about');
@@ -19,6 +21,10 @@ $routes->get('/dashboard', 'Auth::dashboard');
 $routes->get('/logout', 'Auth::logout');
 $routes->post('/course/enroll', 'Course::enroll');
 $routes->get('/mycourses', 'Course::index');
+
+// Teacher routes
+$routes->get('/upload-lessons', 'Teacher::uploadLessons');
+$routes->post('/teacher/enroll-student', 'Teacher::enrollStudent');
 
 
 

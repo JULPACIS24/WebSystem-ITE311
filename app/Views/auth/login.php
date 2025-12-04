@@ -11,12 +11,12 @@
 
 <?= \Config\Services::validation()->listErrors() ?>
 
-<form method="post" action="/login">
+<form method="post" action="<?= site_url('/login') ?>">
     <input type="email" name="email" class="form-control mb-2" placeholder="Email" required>
     <input type="password" name="password" class="form-control mb-2" placeholder="Password" required>
     <button class="btn btn-primary">Login</button>
 </form>
 
-<a href="/register">Create an account</a>
+<a href="<?= site_url('/register') ?>">Create an account</a>
 
 <?= $this->endSection() ?>

@@ -67,7 +67,12 @@ class Auth extends BaseController
             } else {
                 $db      = \Config\Database::connect();
                 $builder = $db->table('users');
-                $user    = $builder->where('email', $this->request->getPost('email'))->get()->getRowArray();
+                // Only allow non-deleted users to log in
+                $user    = $builder
+                    ->where('email', $this->request->getPost('email'))
+                    ->where('is_deleted', 0)
+                    ->get()
+                    ->getRowArray();
 
                 if ($user) {
                     if (password_verify($this->request->getPost('password'), $user['password'])) {
@@ -109,9 +114,39 @@ class Auth extends BaseController
             return redirect()->to('/login');
         }
 
-        $role = $session->get('role');
-        $name = $session->get('name');
+        $role    = $session->get('role');
+        $name    = $session->get('name');
         $user_id = $session->get('id');
+
+        // Base data for all roles
+        $data = [
+            'name' => $name,
+            'role' => $role,
+        ];
+
+        // 🧩 Admin Dashboard Logic (load users list for unified dashboard)
+        if ($role === 'admin') {
+            $userModel = new \App\Models\UserModel();
+            $data['users'] = $userModel->findAll();
+        }
+
+        // 🧩 Teacher Dashboard Logic
+        if ($role === 'teacher') {
+            $courseModel = new CourseModel();
+            $userModel   = new \App\Models\UserModel();
+
+            // Courses handled by this teacher
+            $data['teacherCourses'] = $courseModel->where('teacher_id', $user_id)->findAll();
+
+            // All active students (not deleted)
+            $data['students'] = $userModel
+                ->where('role', 'student')
+                ->groupStart()
+                    ->where('is_deleted', 0)
+                    ->orWhere('is_deleted', null)
+                ->groupEnd()
+                ->findAll();
+        }
 
         // 🧩 Student Dashboard Logic
         if ($role === 'student') {
@@ -129,18 +164,11 @@ class Auth extends BaseController
                 $availableCourses = $courseModel->findAll();
             }
 
-            return view('student/dashboard', [
-                'name' => $name,
-                'role' => $role,
-                'enrolledCourses' => $enrolledCourses,
-                'availableCourses' => $availableCourses
-            ]);
+            $data['enrolledCourses']  = $enrolledCourses;
+            $data['availableCourses'] = $availableCourses;
         }
 
-        // 🧩 Admin or Teacher
-        return view('auth/dashboard', [
-            'name' => $name,
-            'role' => $role
-        ]);
+        // 🧩 Admin, Teacher, or Student
+        return view('auth/dashboard', $data);
     }
 }

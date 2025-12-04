@@ -22,7 +22,7 @@
     </div>
 <?php endif; ?>
 
-<form method="post" action="/register">
+<form method="post" action="<?= site_url('/register') ?>">
     <input type="text" name="name" class="form-control mb-2" 
            placeholder="Full Name" value="<?= set_value('name') ?>" required>
 
@@ -38,6 +38,6 @@
     <button class="btn btn-success">Register</button>
 </form>
 
-<a href="/login">Already have an account? Login</a>
+<a href="<?= site_url('/login') ?>">Already have an account? Login</a>
 
 <?= $this->endSection() ?>
