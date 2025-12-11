@@ -18,6 +18,7 @@ class MaterialModel extends Model
         'file_name',
         'file_path',
         'created_at',
+        'is_deleted',
     ];
 
     public function insertMaterial(array $data)

@@ -52,14 +52,15 @@
               try {
                   $notifModel = new \App\Models\NotificationModel();
                   $userId     = (int) session()->get('id');
-                  $notifItems = $notifModel->where('user_id', $userId)
-                                           ->orderBy('created_at', 'DESC')
-                                           ->findAll(5, 0);
-                  foreach ($notifItems as $n) {
-                      if (empty($n['is_read'])) {
-                          $notifCount++;
-                      }
-                  }
+
+                  // Load only unread notifications for this user
+                  $notifItems = $notifModel
+                      ->where('user_id', $userId)
+                      ->where('is_read', 0)
+                      ->orderBy('created_at', 'DESC')
+                      ->findAll(5, 0);
+
+                  $notifCount = count($notifItems);
               } catch (\Throwable $e) {
                   $notifItems = [];
                   $notifCount = 0;

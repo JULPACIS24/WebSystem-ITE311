@@ -20,7 +20,7 @@
                         </div>
                     <?php endif; ?>
 
-                    <form action="<?= isset($action) ? $action : ''; ?>" method="post" enctype="multipart/form-data">
+                    <form action="<?= isset($action) ? $action : ''; ?>" method="post" enctype="multipart/form-data" id="material-upload-form">
                         <?= csrf_field(); ?>
 
                         <div class="mb-3">
@@ -37,4 +37,30 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var form = document.getElementById('material-upload-form');
+    var fileInput = document.getElementById('material_file');
+
+    if (!form || !fileInput) {
+        return;
+    }
+
+    form.addEventListener('submit', function (e) {
+        var file = fileInput.files[0];
+        if (!file) {
+            return; // backend will handle "uploaded" rule
+        }
+
+        var name = file.name.toLowerCase();
+        if (!(name.endsWith('.pdf') || name.endsWith('.ppt'))) {
+            e.preventDefault();
+            alert('Only PDF and PPT files are allowed.');
+            return false;
+        }
+    });
+});
+</script>
+
 <?= $this->endSection() ?>

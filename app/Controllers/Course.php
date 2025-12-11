@@ -10,8 +10,12 @@ class Course extends BaseController
 {
     public function index()
     {
-        // Redirect to unified dashboard where student courses are shown
-        return redirect()->to('/dashboard');
+        $courseModel = new CourseModel();
+        $courses     = $courseModel->findAll();
+
+        return view('courses/index', [
+            'courses' => $courses,
+        ]);
     }
 
     public function enroll()
@@ -166,5 +170,35 @@ class Course extends BaseController
 
         session()->setFlashdata('success', 'Enrolled successfully!');
         return redirect()->to('/dashboard');
+    }
+
+    public function search()
+    {
+        // Accept search_term from GET or POST
+        $searchTerm = trim((string) $this->request->getVar('search_term'));
+
+        $courseModel = new CourseModel();
+
+        // Apply LIKE filters only when there is a term
+        if ($searchTerm !== '') {
+            $courseModel
+                ->groupStart()
+                    ->like('title', $searchTerm)
+                    ->orLike('course_code', $searchTerm)
+                ->groupEnd();
+        }
+
+        $courses = $courseModel->findAll();
+
+        // Return JSON for AJAX requests
+        if ($this->request->isAJAX()) {
+            return $this->response->setJSON($courses);
+        }
+
+        // Render the main courses index view for regular (non-AJAX) requests
+        return view('courses/index', [
+            'courses'    => $courses,
+            'searchTerm' => $searchTerm,
+        ]);
     }
 }

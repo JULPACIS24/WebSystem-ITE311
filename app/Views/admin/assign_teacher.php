@@ -7,6 +7,10 @@
 <?php $normalizedRole = strtolower(trim($role ?? '')); ?>
 <?php if ($normalizedRole === 'admin'): ?>
 
+<div class="mb-3">
+    <a href="<?= site_url('/courses') ?>" class="btn btn-outline-primary btn-sm">Search Courses</a>
+</div>
+
 <?php $assignSuccess = session()->getFlashdata('assign_success'); ?>
 <?php $assignError   = session()->getFlashdata('assign_error'); ?>
 

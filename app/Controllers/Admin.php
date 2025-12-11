@@ -5,6 +5,7 @@ use App\Models\UserModel;
 use App\Models\CourseModel;
 use App\Models\AcademicSemesterModel;
 use App\Models\AcademicSettingModel;
+use App\Models\NotificationModel;
 
 class Admin extends BaseController
 {
@@ -177,7 +178,7 @@ class Admin extends BaseController
         $courseModel = new CourseModel();
 
         $title          = trim((string) $this->request->getPost('title'));
-        $units          = $this->request->getPost('units');
+        $unitsInput     = $this->request->getPost('units');
         $semester       = $this->request->getPost('default_semester');
         $term           = $this->request->getPost('term');
         $scheduleDay    = $this->request->getPost('schedule_day');
@@ -188,6 +189,19 @@ class Admin extends BaseController
         if ($title === '') {
             session()->setFlashdata('error', 'Title is required for a course.');
             return redirect()->to('/dashboard');
+        }
+
+        // Normalize units to range 1-5 (default 5 when invalid)
+        $units = null;
+        if ($unitsInput !== null && $unitsInput !== '') {
+            $units = (int) $unitsInput;
+            if ($units < 1) {
+                $units = 1;
+            } elseif ($units > 5) {
+                $units = 5;
+            }
+        } else {
+            $units = 5;
         }
 
         // Auto-generate a unique Course CN in the format CN- + 4 digits (e.g. CN-0001).
@@ -211,7 +225,7 @@ class Admin extends BaseController
         $data = [
             'title'               => $title,
             'course_code'         => $courseCode,
-            'units'               => $units !== null && $units !== '' ? (int) $units : null,
+            'units'               => $units,
             'default_semester'    => $semester ?: null,
             'term'                => $term !== null && $term !== '' ? (int) $term : null,
             'schedule_day'        => $scheduleDay ?: null,
@@ -249,13 +263,26 @@ class Admin extends BaseController
 
         $title      = trim((string) $this->request->getPost('title'));
         $courseCode = trim((string) $this->request->getPost('course_code'));
-        $units      = $this->request->getPost('units');
+        $unitsInput = $this->request->getPost('units');
         $semester   = $this->request->getPost('default_semester');
         $term       = $this->request->getPost('term');
 
         if ($title === '') {
             session()->setFlashdata('error', 'Title is required for a course.');
             return redirect()->to('/dashboard');
+        }
+
+        // Normalize units to range 1-5 (default 5 when invalid)
+        $units = null;
+        if ($unitsInput !== null && $unitsInput !== '') {
+            $units = (int) $unitsInput;
+            if ($units < 1) {
+                $units = 1;
+            } elseif ($units > 5) {
+                $units = 5;
+            }
+        } else {
+            $units = 5;
         }
 
         // Prevent duplicate CN globally when updating (exclude this course id)
@@ -274,7 +301,7 @@ class Admin extends BaseController
         $data = [
             'title'            => $title,
             'course_code'      => $courseCode !== '' ? $courseCode : null,
-            'units'            => $units !== null && $units !== '' ? (int) $units : null,
+            'units'            => $units,
             'default_semester' => $semester ?: null,
             'term'             => $term !== null && $term !== '' ? (int) $term : null,
             'updated_at'       => date('Y-m-d H:i:s'),
@@ -785,6 +812,22 @@ class Admin extends BaseController
             session()->setFlashdata('assign_error', 'Failed to assign teacher to course.');
         } else {
             session()->setFlashdata('assign_success', 'Teacher successfully assigned to course.');
+
+            // Create a notification for the assigned teacher
+            try {
+                $notificationModel = new NotificationModel();
+                $courseTitle       = $course['title'] ?? 'a course';
+                $now               = date('Y-m-d H:i:s');
+
+                $notificationModel->insert([
+                    'user_id'    => (int) $teacherId,
+                    'message'    => 'You have been assigned to teach ' . $courseTitle . '.',
+                    'is_read'    => 0,
+                    'created_at' => $now,
+                ]);
+            } catch (\Throwable $e) {
+                log_message('error', 'Failed to create teacher assignment notification: ' . $e->getMessage());
+            }
         }
 
         return redirect()->to('/assign-teacher');

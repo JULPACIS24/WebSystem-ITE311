@@ -182,10 +182,20 @@ class Auth extends BaseController
             $userModel     = new \App\Models\UserModel();
             $enrollModel   = new EnrollmentModel();
             $settingModel  = new AcademicSettingModel();
+            $materialModel = new MaterialModel();
 
             // Courses handled by this teacher
             $teacherCourses = $courseModel->where('teacher_id', $user_id)->findAll();
             $data['teacherCourses'] = $teacherCourses;
+
+            $teacherMaterialsByCourse = [];
+            foreach ($teacherCourses as $course) {
+                $cid = $course['id'] ?? null;
+                if ($cid && !isset($teacherMaterialsByCourse[$cid])) {
+                    $teacherMaterialsByCourse[$cid] = $materialModel->getMaterialsByCourse((int) $cid);
+                }
+            }
+            $data['teacherMaterialsByCourse'] = $teacherMaterialsByCourse;
 
             // All students
             $data['students'] = $userModel

@@ -4,6 +4,10 @@
 <h2>Manage Courses</h2>
 <p>Your role: <strong><?= esc($role) ?></strong></p>
 
+<div class="mb-3">
+    <a href="<?= site_url('/courses') ?>" class="btn btn-outline-primary btn-sm">Search Courses</a>
+</div>
+
 <h4 class="mt-3">Add Course</h4>
 <form method="post" action="<?= site_url('/admin/course/add') ?>" class="mb-4">
     <?= csrf_field() ?>
@@ -18,7 +22,7 @@
         </div>
         <div class="col-md-2">
             <label class="form-label">Units</label>
-            <input type="number" name="units" class="form-control" min="1" max="10" />
+            <input type="number" name="units" class="form-control" min="1" max="5" />
         </div>
         <div class="col-md-3">
             <label class="form-label">Semester</label>
@@ -160,7 +164,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             <td><?= esc($course['default_semester'] ?? '-') ?></td>
                             <td><?= esc($course['term'] ?? '-') ?></td>
                             <td class="text-center">
-                                <a href="<?= site_url('/admin/course/materials/' . $course['id']) ?>" class="btn btn-sm btn-primary me-1 px-2" title="Manage Materials">
+                                <a href="<?= site_url('/materials/upload/' . $course['id']) ?>" class="btn btn-sm btn-primary me-1 px-2" title="Manage Materials">
                                     <div class="d-flex flex-column align-items-center">
                                         <i class="bi bi-folder"></i>
                                         <small style="font-size: 10px; line-height: 1;">Mat</small>

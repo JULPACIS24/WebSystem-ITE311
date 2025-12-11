@@ -13,6 +13,9 @@
 
 <?php elseif ($normalizedRole === 'teacher'): ?>
     <div class="alert alert-success mb-4">Teacher Dashboard - Enroll Students to Courses</div>
+    <div class="mb-3">
+        <a href="<?= site_url('/courses') ?>" class="btn btn-outline-primary btn-sm">Search Courses</a>
+    </div>
 
     <?php if (session()->getFlashdata('success')): ?>
         <div class="alert alert-success"><?= session()->getFlashdata('success') ?></div>
@@ -151,9 +154,53 @@
                             <td><?= esc($cTimeDisp) ?></td>
                             <td><?= !empty($course['is_open']) ? 'Open' : 'Closed' ?></td>
                             <td>
-                                <a href="<?= site_url('materials/upload/' . $course['id']) ?>" class="btn btn-sm btn-outline-primary">
-                                    Upload Materials
-                                </a>
+                                <div class="mb-2">
+                                    <a href="<?= site_url('materials/upload/' . $course['id']) ?>" class="btn btn-sm btn-outline-primary">
+                                        Upload Materials
+                                    </a>
+                                </div>
+                                <?php
+                                    $cid = $course['id'] ?? null;
+                                    $courseMaterials = ($cid && !empty($teacherMaterialsByCourse[$cid])) ? $teacherMaterialsByCourse[$cid] : [];
+                                ?>
+                                <?php if (!empty($courseMaterials)): ?>
+                                    <ul class="list-unstyled mb-0">
+                                        <?php foreach ($courseMaterials as $material): ?>
+                                            <?php
+                                                $mCreatedAt   = $material['created_at'] ?? null;
+                                                $mCreatedDisp = $mCreatedAt ? date('M d, Y h:i A', strtotime($mCreatedAt)) : '';
+                                                $isDeleted    = !empty($material['is_deleted']);
+                                            ?>
+                                            <li class="d-flex justify-content-between align-items-center mb-1">
+                                                <span class="me-2 text-truncate" style="max-width: 220px;">
+                                                    <?= esc($material['file_name'] ?? 'Material') ?>
+                                                    <?php if ($mCreatedDisp): ?>
+                                                        <br><small class="text-muted">Uploaded: <?= esc($mCreatedDisp) ?></small>
+                                                    <?php endif; ?>
+                                                    <?php if ($isDeleted): ?>
+                                                        <br><small class="text-danger">(Deleted)</small>
+                                                    <?php endif; ?>
+                                                </span>
+                                                <div class="btn-group btn-group-sm" role="group">
+                                                    <?php if (!$isDeleted): ?>
+                                                        <a href="<?= site_url('materials/download/' . $material['id']) ?>" class="btn btn-outline-primary">Download</a>
+                                                        <form action="<?= site_url('materials/delete/' . $material['id']) ?>" method="post" onsubmit="return confirm('Delete this material?');">
+                                                            <?= csrf_field() ?>
+                                                            <button type="submit" class="btn btn-outline-danger">Delete</button>
+                                                        </form>
+                                                    <?php else: ?>
+                                                        <form action="<?= site_url('materials/restore/' . $material['id']) ?>" method="post" onsubmit="return confirm('Restore this material?');">
+                                                            <?= csrf_field() ?>
+                                                            <button type="submit" class="btn btn-outline-success">Restore</button>
+                                                        </form>
+                                                    <?php endif; ?>
+                                                </div>
+                                            </li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                <?php else: ?>
+                                    <span class="text-muted">No materials</span>
+                                <?php endif; ?>
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -206,6 +253,9 @@
 
 <?php elseif ($normalizedRole === 'student'): ?>
     <div class="alert alert-warning mb-4">Student Dashboard</div>
+    <div class="mb-3">
+        <a href="<?= site_url('/courses') ?>" class="btn btn-outline-primary btn-sm">Search Courses</a>
+    </div>
 
     <div id="enrollment-alert" class="alert d-none" role="alert"></div>
 
@@ -259,12 +309,25 @@
                             </td>
                             <td>
                                 <?php $courseMaterials = ($cid && !empty($materialsByCourse[$cid])) ? $materialsByCourse[$cid] : []; ?>
-                                <?php if (!empty($courseMaterials)): ?>
+                                <?php
+                                    // Students should only see non-deleted materials
+                                    $visibleMaterials = array_filter($courseMaterials, static function ($m) {
+                                        return empty($m['is_deleted']);
+                                    });
+                                ?>
+                                <?php if (!empty($visibleMaterials)): ?>
                                     <ul class="list-unstyled mb-0">
-                                        <?php foreach ($courseMaterials as $material): ?>
+                                        <?php foreach ($visibleMaterials as $material): ?>
+                                            <?php
+                                                $mCreatedAt   = $material['created_at'] ?? null;
+                                                $mCreatedDisp = $mCreatedAt ? date('M d, Y h:i A', strtotime($mCreatedAt)) : '';
+                                            ?>
                                             <li class="d-flex justify-content-between align-items-center mb-1">
                                                 <span class="me-2 text-truncate" style="max-width: 220px;">
                                                     <?= esc($material['file_name'] ?? 'Material') ?>
+                                                    <?php if ($mCreatedDisp): ?>
+                                                        <br><small class="text-muted">Uploaded: <?= esc($mCreatedDisp) ?></small>
+                                                    <?php endif; ?>
                                                 </span>
                                                 <a href="<?= site_url('materials/download/' . $material['id']) ?>" class="btn btn-sm btn-outline-primary">
                                                     Download
