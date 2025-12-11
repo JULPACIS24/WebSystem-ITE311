@@ -14,12 +14,11 @@ class Notifications extends BaseController
                 ->setJSON(['status' => 'error', 'message' => 'Unauthorized']);
         }
 
-        $userId = (int) $session->get('id');
-
         $model = new NotificationModel();
 
-        $count = $model->getUnreadCount($userId);
-        $list  = $model->getNotificationsForUser($userId);
+        // For now, show global notifications to all logged-in users
+        $count = $model->where('is_read', 0)->countAllResults();
+        $list  = $model->orderBy('created_at', 'DESC')->findAll(5, 0);
 
         return $this->response->setJSON([
             'status' => 'success',
