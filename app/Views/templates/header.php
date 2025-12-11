@@ -38,15 +38,27 @@
             <li class="nav-item"><a class="nav-link admin-section-link" data-section="reports" href="#">Reports</a></li>
             <li class="nav-item"><a class="nav-link" href="<?= site_url('/manage-users') ?>">Manage Users</a></li>
           <?php elseif (session()->get('role') === 'teacher'): ?>
-            <li class="nav-item"><a class="nav-link" href="<?= site_url('/upload-lessons') ?>">Upload Lessons</a></li>
           <?php elseif (session()->get('role') === 'student'): ?>
             <li class="nav-item"><a class="nav-link" href="<?= site_url('/dashboard') ?>">My Courses</a></li>
           <?php endif; ?>
         <?php endif; ?>
 
         <?php if (session()->get('isLoggedIn')): ?>
+          <li class="nav-item dropdown">
+            <a class="nav-link position-relative" href="#" id="notificationsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Notifications
+              <span id="notifBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="display:none;">0</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationsDropdown" style="min-width: 320px;">
+              <li class="dropdown-header">Notifications</li>
+              <li><hr class="dropdown-divider"></li>
+              <li id="notifEmpty"><span class="dropdown-item text-muted">No notifications.</span></li>
+              <div id="notifList"></div>
+            </ul>
+          </li>
           <li class="nav-item"><a class="nav-link text-danger" href="<?= site_url('/logout') ?>">Logout</a></li>
         <?php endif; ?>
+
 
       </ul>
         </div>

@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\EnrollmentModel;
+use App\Models\NotificationModel;
 
 class Teacher extends BaseController
 {
@@ -95,6 +96,22 @@ class Teacher extends BaseController
             session()->setFlashdata('error', 'Failed to enroll the student in this course.');
         } else {
             session()->setFlashdata('success', 'Student enrolled successfully!');
+
+            // Notify the student that the teacher enrolled them
+            try {
+                $notifModel  = new NotificationModel();
+                $courseTitle = $course['title'] ?? 'a course';
+                $teacherName = $session->get('name') ?? 'Your teacher';
+                $message     = $teacherName . ' enrolled you in ' . $courseTitle . '.';
+                $notifModel->insert([
+                    'user_id'    => (int) $studentId,
+                    'message'    => $message,
+                    'is_read'    => 0,
+                    'created_at' => date('Y-m-d H:i:s'),
+                ]);
+            } catch (\Throwable $e) {
+                // ignore notification failures
+            }
         }
 
         return redirect()->to('/dashboard');
@@ -141,6 +158,21 @@ class Teacher extends BaseController
             session()->setFlashdata('error', 'Failed to approve enrollment.');
         } else {
             session()->setFlashdata('success', 'Enrollment approved successfully.');
+
+            // Notify the student that their enrollment was approved
+            try {
+                $notifModel  = new NotificationModel();
+                $courseTitle = $course['title'] ?? 'a course';
+                $message     = 'Your enrollment in ' . $courseTitle . ' has been approved.';
+                $notifModel->insert([
+                    'user_id'    => (int) $enrollment['user_id'],
+                    'message'    => $message,
+                    'is_read'    => 0,
+                    'created_at' => date('Y-m-d H:i:s'),
+                ]);
+            } catch (\Throwable $e) {
+                // ignore notification failures
+            }
         }
 
         return redirect()->to('/dashboard');
@@ -184,6 +216,21 @@ class Teacher extends BaseController
             session()->setFlashdata('error', 'Failed to reject enrollment.');
         } else {
             session()->setFlashdata('success', 'Enrollment rejected successfully.');
+
+            // Notify the student that their enrollment was rejected
+            try {
+                $notifModel  = new NotificationModel();
+                $courseTitle = $course['title'] ?? 'a course';
+                $message     = 'Your enrollment in ' . $courseTitle . ' has been rejected.';
+                $notifModel->insert([
+                    'user_id'    => (int) $enrollment['user_id'],
+                    'message'    => $message,
+                    'is_read'    => 0,
+                    'created_at' => date('Y-m-d H:i:s'),
+                ]);
+            } catch (\Throwable $e) {
+                // ignore notification failures
+            }
         }
 
         return redirect()->to('/dashboard');

@@ -406,8 +406,25 @@ class Admin extends BaseController
 
         $year = trim((string) $this->request->getPost('active_school_year'));
 
-        $settingModel = new AcademicSettingModel();
-        $existing     = $settingModel->first();
+        $settingModel  = new AcademicSettingModel();
+        $semesterModel = new AcademicSemesterModel();
+        $existing      = $settingModel->first();
+
+        // Prevent setting a new academic year while another school year is still ongoing
+        if ($year !== '') {
+            $today   = date('Y-m-d');
+            $ongoing = $semesterModel
+                ->where('DATE(end_date) >=', $today)
+                ->first();
+
+            if ($ongoing && ($ongoing['school_year'] ?? '') !== $year) {
+                session()->setFlashdata(
+                    'error',
+                    'You cannot set the academic year to ' . $year . ' while the school year ' . ($ongoing['school_year'] ?? '') . ' is still ongoing.'
+                );
+                return redirect()->to('/admin/academic-management');
+            }
+        }
 
         $data = [
             'current_school_year' => $year !== '' ? $year : null,
@@ -429,8 +446,8 @@ class Admin extends BaseController
             }
         }
 
-        // Return to unified dashboard where Academic Management lives
-        return redirect()->to('/dashboard');
+        // Return to Academic Management page so admin sees notifications there
+        return redirect()->to('/admin/academic-management');
     }
 
     public function saveSemester()
@@ -451,10 +468,24 @@ class Admin extends BaseController
 
         if (!$semesterName || !$schoolYear) {
             session()->setFlashdata('error', 'Semester name and school year are required.');
-            return redirect()->to('/dashboard');
+            return redirect()->to('/admin/academic-management');
         }
 
         $semesterModel = new AcademicSemesterModel();
+        // Do not allow adding a semester for a new school year
+        // while there is still an ongoing academic year (end_date today or in the future)
+        $today   = date('Y-m-d');
+        $ongoing = $semesterModel
+            ->where('DATE(end_date) >=', $today)
+            ->first();
+
+        if ($ongoing && ($ongoing['school_year'] ?? '') !== $schoolYear) {
+            session()->setFlashdata(
+                'error',
+                'You cannot add a semester for ' . $schoolYear . ' while the academic year ' . ($ongoing['school_year'] ?? '') . ' is still ongoing.'
+            );
+            return redirect()->to('/admin/academic-management');
+        }
 
         $data = [
             'semester_name'     => $semesterName,
@@ -473,7 +504,7 @@ class Admin extends BaseController
             session()->setFlashdata('success', 'Semester saved successfully.');
         }
 
-        return redirect()->to('/dashboard');
+        return redirect()->to('/admin/academic-management');
     }
 
     public function saveDefaultYearLevel()

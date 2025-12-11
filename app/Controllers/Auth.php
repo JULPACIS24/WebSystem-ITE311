@@ -6,6 +6,7 @@ use App\Models\EnrollmentModel;
 use App\Models\CourseModel;
 use App\Models\AcademicSemesterModel;
 use App\Models\AcademicSettingModel;
+use App\Models\MaterialModel;
 use CodeIgniter\Controller;
 
 class Auth extends BaseController
@@ -203,12 +204,21 @@ class Auth extends BaseController
 
         // 🧩 Student Dashboard Logic
         if ($role === 'student') {
-            $enrollModel = new EnrollmentModel();
-            $courseModel = new CourseModel();
+            $enrollModel   = new EnrollmentModel();
+            $courseModel   = new CourseModel();
+            $materialModel = new MaterialModel();
 
             // Get enrolled courses
             $enrolledCourses = $enrollModel->getUserEnrollments($user_id);
             $enrolledIds     = array_column($enrolledCourses, 'course_id');
+
+            $materialsByCourse = [];
+            foreach ($enrolledCourses as $course) {
+                $cid = $course['course_id'] ?? ($course['id'] ?? null);
+                if ($cid && !isset($materialsByCourse[$cid])) {
+                    $materialsByCourse[$cid] = $materialModel->getMaterialsByCourse((int) $cid);
+                }
+            }
 
             // Get available courses
             if (count($enrolledIds) > 0) {
@@ -217,8 +227,9 @@ class Auth extends BaseController
                 $availableCourses = $courseModel->findAll();
             }
 
-            $data['enrolledCourses']  = $enrolledCourses;
-            $data['availableCourses'] = $availableCourses;
+            $data['enrolledCourses']   = $enrolledCourses;
+            $data['availableCourses']  = $availableCourses;
+            $data['materialsByCourse'] = $materialsByCourse;
         }
 
         // 🧩 Admin, Teacher, or Student - unified dashboard view

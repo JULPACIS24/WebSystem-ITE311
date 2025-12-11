@@ -118,17 +118,28 @@
                         <th>Course</th>
                         <th>Units</th>
                         <th>Default Semester</th>
+                        <th>Term</th>
                         <th>School Year</th>
+                        <th>Day</th>
+                        <th>Time</th>
                         <th>Open</th>
+                        <th>Materials</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach ($teacherCourses as $course): ?>
+                        <?php
+                            $cCreatedAt   = $course['created_at'] ?? null;
+                            $cDayDisp     = $cCreatedAt ? date('D', strtotime($cCreatedAt)) : '';
+                            $cTimeDisp    = $cCreatedAt ? date('h:i A', strtotime($cCreatedAt)) : '';
+                            $cTerm        = $course['default_semester'] ?? '';
+                        ?>
                         <tr>
                             <td><?= esc($course['course_code'] ?? '') ?></td>
                             <td><?= esc($course['title'] ?? 'Course') ?></td>
                             <td><?= esc($course['units'] ?? '') ?></td>
                             <td><?= esc($course['default_semester'] ?? '') ?></td>
+                            <td><?= esc($cTerm) ?></td>
                             <td>
                                 <?php
                                     $courseYear  = $course['default_school_year'] ?? null;
@@ -136,7 +147,14 @@
                                 ?>
                                 <?= esc($displayYear ?? '') ?>
                             </td>
+                            <td><?= esc($cDayDisp) ?></td>
+                            <td><?= esc($cTimeDisp) ?></td>
                             <td><?= !empty($course['is_open']) ? 'Open' : 'Closed' ?></td>
+                            <td>
+                                <a href="<?= site_url('materials/upload/' . $course['id']) ?>" class="btn btn-sm btn-outline-primary">
+                                    Upload Materials
+                                </a>
+                            </td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
@@ -152,18 +170,32 @@
                     <tr>
                         <th>Course</th>
                         <th>Student</th>
+                        <th>Units</th>
                         <th>Semester</th>
                         <th>School Year</th>
+                        <th>Enrolled On</th>
+                        <th>Day</th>
+                        <th>Time</th>
                         <th>Status</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach ($activeEnrollments as $enroll): ?>
+                        <?php
+                            $tEnrolledAt   = $enroll['enrolled_at'] ?? null;
+                            $tEnrolledDisp = $tEnrolledAt ? date('M d, Y', strtotime($tEnrolledAt)) : 'N/A';
+                            $tDayDisp      = $tEnrolledAt ? date('D', strtotime($tEnrolledAt)) : '';
+                            $tTimeDisp     = $tEnrolledAt ? date('h:i A', strtotime($tEnrolledAt)) : '';
+                        ?>
                         <tr>
                             <td><?= esc($enroll['course_title'] ?? 'Course') ?></td>
                             <td><?= esc($enroll['student_name']) ?> (<?= esc($enroll['student_email']) ?>)</td>
+                            <td><?= esc($enroll['course_units'] ?? '') ?></td>
                             <td><?= esc($enroll['semester'] ?? '') ?></td>
                             <td><?= esc($enroll['school_year'] ?? '') ?></td>
+                            <td><?= esc($tEnrolledDisp) ?></td>
+                            <td><?= esc($tDayDisp) ?></td>
+                            <td><?= esc($tTimeDisp) ?></td>
                             <td><span class="badge bg-success">Active</span></td>
                         </tr>
                     <?php endforeach; ?>
@@ -185,10 +217,14 @@
                     <tr>
                         <th>CN</th>
                         <th>Course Name</th>
+                        <th>Units</th>
                         <th>Semester</th>
                         <th>School Year</th>
                         <th>Enrolled On</th>
+                        <th>Day</th>
+                        <th>Time</th>
                         <th>Status</th>
+                        <th>Materials</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -196,16 +232,22 @@
                         <?php
                             $sem        = $course['semester']    ?? '';
                             $sy         = $course['school_year'] ?? '';
-                            $enrolledAt = $course['enrolled_at'] ?? null;
+                            $enrolledAt   = $course['enrolled_at'] ?? null;
                             $enrolledDisp = $enrolledAt ? date('M d, Y', strtotime($enrolledAt)) : 'N/A';
+                            $dayDisp      = $enrolledAt ? date('D', strtotime($enrolledAt)) : '';
+                            $timeDisp     = $enrolledAt ? date('h:i A', strtotime($enrolledAt)) : '';
                             $status     = $course['status']      ?? '';
                         ?>
-                        <tr data-course-id="<?= $course['id'] ?>">
+                        <?php $cid = $course['course_id'] ?? $course['id'] ?? null; ?>
+                        <tr data-course-id="<?= $cid ?>">
                             <td><?= esc($course['course_code'] ?? '') ?></td>
                             <td><?= esc($course['title'] ?? 'Course') ?></td>
+                            <td><?= esc($course['units'] ?? '') ?></td>
                             <td><?= esc($sem) ?></td>
                             <td><?= esc($sy) ?></td>
                             <td><?= esc($enrolledDisp) ?></td>
+                            <td><?= esc($dayDisp) ?></td>
+                            <td><?= esc($timeDisp) ?></td>
                             <td>
                                 <?php if ($status === 'pending'): ?>
                                     <span class="badge bg-warning text-dark">Pending</span>
@@ -213,6 +255,25 @@
                                     <span class="badge bg-success">Approved</span>
                                 <?php else: ?>
                                     <span class="badge bg-secondary"><?= esc($status ?: 'Unknown') ?></span>
+                                <?php endif; ?>
+                            </td>
+                            <td>
+                                <?php $courseMaterials = ($cid && !empty($materialsByCourse[$cid])) ? $materialsByCourse[$cid] : []; ?>
+                                <?php if (!empty($courseMaterials)): ?>
+                                    <ul class="list-unstyled mb-0">
+                                        <?php foreach ($courseMaterials as $material): ?>
+                                            <li class="d-flex justify-content-between align-items-center mb-1">
+                                                <span class="me-2 text-truncate" style="max-width: 220px;">
+                                                    <?= esc($material['file_name'] ?? 'Material') ?>
+                                                </span>
+                                                <a href="<?= site_url('materials/download/' . $material['id']) ?>" class="btn btn-sm btn-outline-primary">
+                                                    Download
+                                                </a>
+                                            </li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                <?php else: ?>
+                                    <span class="text-muted">No materials</span>
                                 <?php endif; ?>
                             </td>
                         </tr>

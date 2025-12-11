@@ -2,8 +2,9 @@
 
 namespace App\Controllers;
 
-use App\Models\CourseModel;
 use App\Models\EnrollmentModel;
+use App\Models\CourseModel;
+use App\Models\NotificationModel;
 
 class Course extends BaseController
 {
@@ -119,6 +120,36 @@ class Course extends BaseController
             }
             session()->setFlashdata('error', 'Failed to enroll in this course.');
             return redirect()->to('/dashboard');
+        }
+
+        // Create notifications about the enrollment request
+        try {
+            $notifModel  = new NotificationModel();
+            $courseTitle = $course['title'] ?? 'a course';
+
+            // For the student
+            $studentMsg = 'Your enrollment request for ' . $courseTitle . ' has been submitted.';
+            $notifModel->insert([
+                'user_id'    => $user_id,
+                'message'    => $studentMsg,
+                'is_read'    => 0,
+                'created_at' => date('Y-m-d H:i:s'),
+            ]);
+
+            // For the teacher handling this course (if any)
+            $teacherId = $course['teacher_id'] ?? null;
+            if (!empty($teacherId)) {
+                $studentName = $session->get('name') ?? 'A student';
+                $teacherMsg  = $studentName . ' requested enrollment in ' . $courseTitle . '.';
+                $notifModel->insert([
+                    'user_id'    => (int) $teacherId,
+                    'message'    => $teacherMsg,
+                    'is_read'    => 0,
+                    'created_at' => date('Y-m-d H:i:s'),
+                ]);
+            }
+        } catch (\Throwable $e) {
+            // ignore notification failures
         }
 
         if ($this->request->isAJAX()) {

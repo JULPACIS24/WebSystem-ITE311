@@ -8,7 +8,7 @@ class EnrollmentModel extends Model
 {
     protected $table = 'enrollments';
     protected $primaryKey = 'id';
-    // user_id is always from session; current enrollments table only has user_id, course_id, enrolled_at
+    // Enrollments table with status and optional semester-related metadata
     protected $allowedFields = [
         'user_id',
         'course_id',
@@ -23,20 +23,37 @@ class EnrollmentModel extends Model
     // Insert a new enrollment record
     public function enrollUser($data)
     {
-        return $this->insert($data);
+        $safeData = [
+            'user_id'     => $data['user_id']     ?? null,
+            'course_id'   => $data['course_id']   ?? null,
+            'enrolled_at' => $data['enrolled_at'] ?? date('Y-m-d H:i:s'),
+            'semester'    => $data['semester']    ?? null,
+            'school_year' => $data['school_year'] ?? null,
+            'start_date'  => $data['start_date']  ?? null,
+            'end_date'    => $data['end_date']    ?? null,
+            'status'      => $data['status']      ?? 'pending',
+        ];
+
+        return $this->insert($safeData);
     }
 
     // Fetch all courses a user is enrolled in
     public function getUserEnrollments($user_id)
     {
         try {
-            return $this->select('courses.*, enrollments.enrolled_at, enrollments.semester, enrollments.school_year, enrollments.status')
+            $today = date('Y-m-d');
+
+            return $this->select('courses.*, enrollments.enrolled_at, enrollments.semester, enrollments.school_year, enrollments.status, enrollments.start_date, enrollments.end_date')
                         ->join('courses', 'courses.id = enrollments.course_id')
                         ->where('enrollments.user_id', $user_id)
+                        // Show only current or future enrollments: no end_date or end_date >= today
+                        ->groupStart()
+                            ->where('enrollments.end_date IS NULL')
+                            ->orWhere('DATE(enrollments.end_date) >=', $today)
+                        ->groupEnd()
                         ->findAll();
         } catch (\Throwable $e) {
-            // Fallback if `status` column does not exist: just log and return empty list
-            log_message('error', 'EnrollmentModel::getUserEnrollments status column missing or query failed: ' . $e->getMessage());
+            log_message('error', 'EnrollmentModel::getUserEnrollments query failed: ' . $e->getMessage());
             return [];
         }
     }
@@ -55,14 +72,22 @@ class EnrollmentModel extends Model
             $builder = $builder->where('school_year', $schoolYear);
         }
 
-        return $builder->first();
+        try {
+            return $builder->first();
+        } catch (\Throwable $e) {
+            log_message('error', 'EnrollmentModel::isAlreadyEnrolled query failed: ' . $e->getMessage());
+
+            return $this->where('user_id', $user_id)
+                        ->where('course_id', $course_id)
+                        ->first();
+        }
     }
 
     // Fetch pending enrollments for courses handled by a teacher
     public function getPendingForTeacher($teacherId)
     {
         try {
-            return $this->select('enrollments.*, courses.title as course_title, users.name as student_name, users.email as student_email')
+            return $this->select('enrollments.*, courses.title as course_title, courses.units as course_units, users.name as student_name, users.email as student_email')
                         ->join('courses', 'courses.id = enrollments.course_id')
                         ->join('users', 'users.id = enrollments.user_id')
                         ->where('courses.teacher_id', $teacherId)
@@ -95,11 +120,18 @@ class EnrollmentModel extends Model
     public function getActiveForTeacher($teacherId)
     {
         try {
-            return $this->select('enrollments.*, courses.title as course_title, users.name as student_name, users.email as student_email')
+            $today = date('Y-m-d');
+
+            return $this->select('enrollments.*, courses.title as course_title, courses.units as course_units, users.name as student_name, users.email as student_email')
                         ->join('courses', 'courses.id = enrollments.course_id')
                         ->join('users', 'users.id = enrollments.user_id')
                         ->where('courses.teacher_id', $teacherId)
                         ->where('enrollments.status', 'active')
+                        // Only show enrollments that are still within their end_date (or have no end_date)
+                        ->groupStart()
+                            ->where('enrollments.end_date IS NULL')
+                            ->orWhere('DATE(enrollments.end_date) >=', $today)
+                        ->groupEnd()
                         ->orderBy('courses.title', 'ASC')
                         ->orderBy('users.name', 'ASC')
                         ->findAll();
