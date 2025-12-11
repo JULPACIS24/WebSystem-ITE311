@@ -4,103 +4,14 @@
 <h2>Welcome, <?= esc($name) ?>!</h2>
 <p>Your role: <strong><?= esc($role) ?></strong></p>
 
-<?php if ($role === 'admin'): ?>
-    <div class="alert alert-primary mb-4">Admin Dashboard - Manage Users</div>
+<?php $normalizedRole = strtolower(trim($role ?? '')); ?>
 
-    <?php if (session()->getFlashdata('success')): ?>
-        <div class="alert alert-success"><?= session()->getFlashdata('success') ?></div>
-    <?php endif; ?>
-    <?php if (session()->getFlashdata('error')): ?>
-        <div class="alert alert-danger"><?= session()->getFlashdata('error') ?></div>
-    <?php endif; ?>
+<?php if ($normalizedRole === 'admin'): ?>
 
-    <!-- Add User Form (inline on dashboard) -->
-    <h4 class="mt-3">Add User</h4>
-    <form method="post" action="<?= site_url('/add-user') ?>" class="mb-4">
-        <?= csrf_field() ?>
-        <div class="row g-2 align-items-end">
-            <div class="col-md-3">
-                <label class="form-label">Name</label>
-                <input type="text" name="name" class="form-control" required />
-            </div>
-            <div class="col-md-3">
-                <label class="form-label">Email</label>
-                <input type="email" name="email" class="form-control" required />
-            </div>
-            <div class="col-md-2">
-                <label class="form-label">Password</label>
-                <input type="password" name="password" class="form-control" required />
-            </div>
-            <div class="col-md-2">
-                <label class="form-label">Role</label>
-                <select name="role" class="form-select">
-                    <option value="student">Student</option>
-                    <option value="teacher">Teacher</option>
-                    <option value="admin">Admin</option>
-                </select>
-            </div>
-            <div class="col-md-2">
-                <button type="submit" class="btn btn-success w-100">Add User</button>
-            </div>
-        </div>
-    </form>
+    <div class="alert alert-primary mb-4">Admin Dashboard</div>
+    <p>Use the navigation above to manage academic settings, courses, enrollment, users, and reports.</p>
 
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Role</th>
-                <th>Created At</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php if (!empty($users ?? [])): ?>
-                <?php $currentUserId = session()->get('id'); ?>
-                <?php foreach ($users as $user): ?>
-                    <tr>
-                        <td><?= esc($user['id']) ?></td>
-                        <td><?= esc($user['name']) ?></td>
-                        <td><?= esc($user['email']) ?></td>
-                        <td><?= esc($user['role']) ?></td>
-                        <td><?= esc($user['created_at']) ?></td>
-                        <td>
-                            <?php if (!empty($user['is_deleted'])): ?>
-                                <span class="text-muted">Marked as deleted</span>
-                            <?php elseif ((int)$user['id'] === (int)$currentUserId && $user['role'] === 'admin'): ?>
-                                <span class="text-muted">Admin account</span>
-                            <?php else: ?>
-                                <!-- Change role form -->
-                                <form method="post" action="<?= site_url('/update-user-role/' . $user['id']) ?>" class="d-inline">
-                                    <?= csrf_field() ?>
-                                    <select name="role" class="form-select form-select-sm d-inline-block w-auto me-1">
-                                        <option value="student" <?= $user['role'] === 'student' ? 'selected' : '' ?>>Student</option>
-                                        <option value="teacher" <?= $user['role'] === 'teacher' ? 'selected' : '' ?>>Teacher</option>
-                                        <option value="admin" <?= $user['role'] === 'admin' ? 'selected' : '' ?>>Admin</option>
-                                    </select>
-                                    <button type="submit" class="btn btn-sm btn-primary">Update</button>
-                                </form>
-
-                                <!-- Delete user form -->
-                                <form method="post" action="<?= site_url('/delete-user/' . $user['id']) ?>" style="display:inline-block;">
-                                    <?= csrf_field() ?>
-                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this user?');">Delete</button>
-                                </form>
-                            <?php endif; ?>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <tr>
-                    <td colspan="6" class="text-center text-muted">No users found.</td>
-                </tr>
-            <?php endif; ?>
-        </tbody>
-    </table>
-
-<?php elseif ($role === 'teacher'): ?>
+<?php elseif ($normalizedRole === 'teacher'): ?>
     <div class="alert alert-success mb-4">Teacher Dashboard - Enroll Students to Courses</div>
 
     <?php if (session()->getFlashdata('success')): ?>
@@ -113,16 +24,19 @@
     <form method="post" action="<?= site_url('/teacher/enroll-student') ?>" class="card card-body mb-4">
         <?= csrf_field() ?>
         <div class="row g-3 align-items-end">
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <label class="form-label">Course</label>
                 <select name="course_id" class="form-select" required>
                     <option value="">-- Select Course --</option>
                     <?php foreach (($teacherCourses ?? []) as $course): ?>
-                        <option value="<?= $course['id'] ?>"><?= esc($course['title']) ?></option>
+                        <?php $u = $course['units'] ?? null; ?>
+                        <option value="<?= $course['id'] ?>">
+                            <?= esc($course['title']) ?><?= $u !== null && $u !== '' ? ' (' . esc($u) . ' units)' : '' ?>
+                        </option>
                     <?php endforeach; ?>
                 </select>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <label class="form-label">Student</label>
                 <select name="student_id" class="form-select" required>
                     <option value="">-- Select Student --</option>
@@ -131,118 +45,246 @@
                     <?php endforeach; ?>
                 </select>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-2">
+                <label class="form-label">Semester</label>
+                <select name="semester" class="form-select" required>
+                    <option value="1st Sem">1st Sem</option>
+                    <option value="2nd Sem">2nd Sem</option>
+                    <option value="Summer">Summer</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">School Year</label>
+                <input type="text" name="school_year" class="form-control" value="2025-2026" placeholder="e.g. 2025-2026" required />
+            </div>
+            <div class="col-md-2">
                 <button type="submit" class="btn btn-primary w-100">Enroll Student</button>
             </div>
         </div>
     </form>
 
-<?php elseif ($role === 'student'): ?>
+    <?php if (!empty($pendingEnrollments ?? [])): ?>
+        <h4 class="mt-4">View Pending Enrollment Requests</h4>
+        <div class="table-responsive mb-4">
+            <table class="table table-bordered align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Student</th>
+                        <th>Course</th>
+                        <th>Semester</th>
+                        <th>School Year</th>
+                        <th>Requested On</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($pendingEnrollments as $enroll): ?>
+                        <?php
+                            $requestedAt = $enroll['enrolled_at'] ?? null;
+                            $requestedDisp = $requestedAt ? date('M d, Y', strtotime($requestedAt)) : 'N/A';
+                        ?>
+                        <tr>
+                            <td><?= esc($enroll['student_name']) ?> (<?= esc($enroll['student_email']) ?>)</td>
+                            <td><?= esc($enroll['course_title'] ?? 'Course') ?></td>
+                            <td><?= esc($enroll['semester'] ?? '') ?></td>
+                            <td><?= esc($enroll['school_year'] ?? '') ?></td>
+                            <td><?= esc($requestedDisp) ?></td>
+                            <td>
+                                <form method="post" action="<?= site_url('/teacher/approve-enrollment/' . $enroll['id']) ?>" onsubmit="return confirm('Approve this enrollment?');" class="d-inline me-1">
+                                    <?= csrf_field() ?>
+                                    <button type="submit" class="btn btn-sm btn-success">Approve</button>
+                                </form>
+                                <form method="post" action="<?= site_url('/teacher/reject-enrollment/' . $enroll['id']) ?>" onsubmit="return confirm('Reject this enrollment?');" class="d-inline">
+                                    <?= csrf_field() ?>
+                                    <button type="submit" class="btn btn-sm btn-danger">Reject</button>
+                                </form>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    <?php else: ?>
+        <p class="text-muted">No pending enrollments at the moment.</p>
+    <?php endif; ?>
+
+    <?php if (!empty($teacherCourses ?? [])): ?>
+        <h4 class="mt-4">My Courses</h4>
+        <div class="table-responsive mb-4">
+            <table class="table table-bordered align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>CN</th>
+                        <th>Course</th>
+                        <th>Units</th>
+                        <th>Default Semester</th>
+                        <th>School Year</th>
+                        <th>Open</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($teacherCourses as $course): ?>
+                        <tr>
+                            <td><?= esc($course['course_code'] ?? '') ?></td>
+                            <td><?= esc($course['title'] ?? 'Course') ?></td>
+                            <td><?= esc($course['units'] ?? '') ?></td>
+                            <td><?= esc($course['default_semester'] ?? '') ?></td>
+                            <td>
+                                <?php
+                                    $courseYear  = $course['default_school_year'] ?? null;
+                                    $displayYear = $courseYear ?: ($currentSchoolYear ?? null);
+                                ?>
+                                <?= esc($displayYear ?? '') ?>
+                            </td>
+                            <td><?= !empty($course['is_open']) ? 'Open' : 'Closed' ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    <?php endif; ?>
+
+    <?php if (!empty($activeEnrollments ?? [])): ?>
+        <h4 class="mt-4">Enrolled Students Per Course</h4>
+        <div class="table-responsive mb-4">
+            <table class="table table-bordered align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Course</th>
+                        <th>Student</th>
+                        <th>Semester</th>
+                        <th>School Year</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($activeEnrollments as $enroll): ?>
+                        <tr>
+                            <td><?= esc($enroll['course_title'] ?? 'Course') ?></td>
+                            <td><?= esc($enroll['student_name']) ?> (<?= esc($enroll['student_email']) ?>)</td>
+                            <td><?= esc($enroll['semester'] ?? '') ?></td>
+                            <td><?= esc($enroll['school_year'] ?? '') ?></td>
+                            <td><span class="badge bg-success">Active</span></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    <?php endif; ?>
+
+<?php elseif ($normalizedRole === 'student'): ?>
     <div class="alert alert-warning mb-4">Student Dashboard</div>
 
-    <!-- ✅ Enrolled Courses -->
     <div id="enrollment-alert" class="alert d-none" role="alert"></div>
 
     <h4>Your Enrolled Courses</h4>
     <?php if (!empty($enrolledCourses ?? [])): ?>
-        <ul id="enrolled-courses" class="list-group mb-4">
-            <?php foreach ($enrolledCourses as $course): ?>
-                <li class="list-group-item d-flex justify-content-between align-items-center" data-course-id="<?= $course['id'] ?>">
-                    <?= esc($course['title'] ?? 'Course') ?>
-                    <span class="badge bg-success">Enrolled</span>
-                </li>
-            <?php endforeach; ?>
-        </ul>
+        <div class="table-responsive mb-4">
+            <table class="table table-bordered align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>CN</th>
+                        <th>Course Name</th>
+                        <th>Semester</th>
+                        <th>School Year</th>
+                        <th>Enrolled On</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($enrolledCourses as $course): ?>
+                        <?php
+                            $sem        = $course['semester']    ?? '';
+                            $sy         = $course['school_year'] ?? '';
+                            $enrolledAt = $course['enrolled_at'] ?? null;
+                            $enrolledDisp = $enrolledAt ? date('M d, Y', strtotime($enrolledAt)) : 'N/A';
+                            $status     = $course['status']      ?? '';
+                        ?>
+                        <tr data-course-id="<?= $course['id'] ?>">
+                            <td><?= esc($course['course_code'] ?? '') ?></td>
+                            <td><?= esc($course['title'] ?? 'Course') ?></td>
+                            <td><?= esc($sem) ?></td>
+                            <td><?= esc($sy) ?></td>
+                            <td><?= esc($enrolledDisp) ?></td>
+                            <td>
+                                <?php if ($status === 'pending'): ?>
+                                    <span class="badge bg-warning text-dark">Pending</span>
+                                <?php elseif ($status === 'active'): ?>
+                                    <span class="badge bg-success">Approved</span>
+                                <?php else: ?>
+                                    <span class="badge bg-secondary"><?= esc($status ?: 'Unknown') ?></span>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
     <?php else: ?>
         <p id="no-enrolled-message" class="text-muted">You are not enrolled in any courses yet.</p>
         <ul id="enrolled-courses" class="list-group mb-4 d-none"></ul>
     <?php endif; ?>
 
-    <!-- ✅ Available Courses (Dropdown) -->
     <h4>Available Courses</h4>
     <?php if (!empty($availableCourses ?? [])): ?>
-        <form id="student-enroll-form" class="row g-3 align-items-end mb-4">
-            <div class="col-md-8">
-                <label class="form-label">Select Course</label>
-                <select id="available-course-select" class="form-select" required>
-                    <option value="">-- Select Course --</option>
+        <div class="table-responsive mb-4">
+            <table class="table table-bordered align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>CN</th>
+                        <th>Course Name</th>
+                        <th>Semester</th>
+                        <th>School Year</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
                     <?php foreach ($availableCourses as $course): ?>
-                        <option value="<?= $course['id'] ?>"><?= esc($course['title'] ?? 'Course') ?></option>
+                        <tr>
+                            <td><?= esc($course['course_code'] ?? '') ?></td>
+                            <td><?= esc($course['title'] ?? 'Course') ?></td>
+                            <?php $open = !empty($course['is_open']); ?>
+                            <td>
+                                <?php if ($open): ?>
+                                    <form method="post" action="<?= site_url('/course/enroll') ?>" class="d-flex align-items-center gap-1">
+                                        <?= csrf_field() ?>
+                                        <input type="hidden" name="course_id" value="<?= $course['id'] ?>" />
+                                        <select name="semester" class="form-select form-select-sm" required>
+                                            <option value="1st Sem">1st Sem</option>
+                                            <option value="2nd Sem">2nd Sem</option>
+                                            <option value="Summer">Summer</option>
+                                        </select>
+                                <?php else: ?>
+                                    <span class="text-muted">N/A</span>
+                                <?php endif; ?>
+                            </td>
+                            <td>
+                                <?php if ($open): ?>
+                                        <input type="text" name="school_year" class="form-control form-control-sm" value="2025-2026" placeholder="e.g. 2025-2026" required />
+                                <?php else: ?>
+                                        <span class="text-muted">N/A</span>
+                                <?php endif; ?>
+                            </td>
+                            <td>
+                                <?= $open ? 'Open' : 'Closed' ?>
+                            </td>
+                            <td>
+                                <?php if ($open): ?>
+                                        <button type="submit" class="btn btn-sm btn-primary">Enroll</button>
+                                    </form>
+                                <?php else: ?>
+                                    <span class="badge bg-secondary">Closed</span>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
                     <?php endforeach; ?>
-                </select>
-            </div>
-            <div class="col-md-4">
-                <button type="submit" id="btn-enroll-selected" class="btn btn-primary w-100">Enroll</button>
-            </div>
-        </form>
+                </tbody>
+            </table>
+        </div>
     <?php else: ?>
         <p class="text-muted">No more available courses to enroll.</p>
     <?php endif; ?>
-
-    <script>
-        $(function () {
-            $('#student-enroll-form').on('submit', function (e) {
-                e.preventDefault();
-
-                var select   = $('#available-course-select');
-                var courseId = select.val();
-                var courseText = select.find('option:selected').text();
-
-                if (!courseId) {
-                    var alertBox = $('#enrollment-alert');
-                    alertBox.removeClass('d-none alert-success').addClass('alert-danger')
-                        .text('Please select a course to enroll.');
-                    return;
-                }
-
-                $.ajax({
-                    url: '<?= site_url('/course/enroll') ?>',
-                    method: 'POST',
-                    data: {
-                        course_id: courseId,
-                        '<?= csrf_token() ?>': '<?= csrf_hash() ?>'
-                    },
-                    dataType: 'json',
-                    success: function (response) {
-                        var alertBox = $('#enrollment-alert');
-                        alertBox.removeClass('d-none alert-success alert-danger');
-
-                        if (response.status === 'success') {
-                            alertBox.addClass('alert-success').text(response.message);
-
-                            // Add to enrolled list
-                            $('#no-enrolled-message').addClass('d-none');
-                            $('#enrolled-courses').removeClass('d-none').append(
-                                '<li class="list-group-item d-flex justify-content-between align-items-center" data-course-id="' + courseId + '">' +
-                                $('<div>').text(courseText).html() +
-                                '<span class="badge bg-success">Enrolled</span>' +
-                                '</li>'
-                            );
-
-                            // Remove selected option from dropdown
-                            select.find('option[value="' + courseId + '"]').remove();
-
-                            // Reset select
-                            select.val('');
-
-                            // If no more courses, hide form
-                            if (select.find('option').length === 1) {
-                                $('#student-enroll-form').remove();
-                                $('#enrollment-alert').after('<p class="text-muted">No more available courses to enroll.</p>');
-                            }
-                        } else {
-                            alertBox.addClass('alert-danger').text(response.message || 'Enrollment failed.');
-                        }
-                    },
-                    error: function () {
-                        var alertBox = $('#enrollment-alert');
-                        alertBox.removeClass('d-none alert-success').addClass('alert-danger')
-                            .text('An error occurred while enrolling.');
-                    }
-                });
-            });
-        });
-    </script>
 
 <?php endif; ?>
 

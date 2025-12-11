@@ -4,6 +4,8 @@ namespace App\Controllers;
 
 use App\Models\EnrollmentModel;
 use App\Models\CourseModel;
+use App\Models\AcademicSemesterModel;
+use App\Models\AcademicSettingModel;
 use CodeIgniter\Controller;
 
 class Auth extends BaseController
@@ -67,10 +69,8 @@ class Auth extends BaseController
             } else {
                 $db      = \Config\Database::connect();
                 $builder = $db->table('users');
-                // Only allow non-deleted users to log in
                 $user    = $builder
                     ->where('email', $this->request->getPost('email'))
-                    ->where('is_deleted', 0)
                     ->get()
                     ->getRowArray();
 
@@ -124,28 +124,81 @@ class Auth extends BaseController
             'role' => $role,
         ];
 
-        // 🧩 Admin Dashboard Logic (load users list for unified dashboard)
+        // 🧩 Admin Dashboard Logic (load users list and admin modules for unified dashboard)
         if ($role === 'admin') {
-            $userModel = new \App\Models\UserModel();
-            $data['users'] = $userModel->findAll();
+            // Default empty data so the view can still render even if DB calls fail
+            $data['users']     = [];
+            $data['courses']   = [];
+            $data['teachers']  = [];
+            $data['semesters'] = [];
+            $data['setting']   = null;
+
+            try {
+                $userModel     = new \App\Models\UserModel();
+                $courseModel   = new CourseModel();
+                $enrollModel   = new EnrollmentModel();
+                $semesterModel = new AcademicSemesterModel();
+                $settingModel  = new AcademicSettingModel();
+
+                $data['users'] = $userModel->findAll();
+
+                $courses = $courseModel->findAll();
+                foreach ($courses as &$course) {
+                    $course['enrollment_count'] = $enrollModel->getEnrollmentCountByCourse($course['id']);
+                }
+                unset($course);
+
+                $teachers = $userModel
+                    ->where('role', 'teacher')
+                    ->findAll();
+
+                // Some installations may not yet have the academic_semesters/settings tables.
+                $semesters = [];
+                $setting   = null;
+                try {
+                    $semesters = $semesterModel
+                        ->orderBy('school_year', 'DESC')
+                        ->orderBy('id', 'DESC')
+                        ->findAll();
+                    $setting   = $settingModel->first();
+                } catch (\Throwable $e) {
+                    log_message('error', 'Dashboard admin academic data failed: ' . $e->getMessage());
+                }
+
+                $data['courses']   = $courses;
+                $data['teachers']  = $teachers;
+                $data['semesters'] = $semesters;
+                $data['setting']   = $setting;
+            } catch (\Throwable $e) {
+                log_message('error', 'Dashboard admin data failed: ' . $e->getMessage());
+                // keep defaults so view still renders
+            }
         }
 
         // 🧩 Teacher Dashboard Logic
         if ($role === 'teacher') {
-            $courseModel = new CourseModel();
-            $userModel   = new \App\Models\UserModel();
+            $courseModel   = new CourseModel();
+            $userModel     = new \App\Models\UserModel();
+            $enrollModel   = new EnrollmentModel();
+            $settingModel  = new AcademicSettingModel();
 
             // Courses handled by this teacher
-            $data['teacherCourses'] = $courseModel->where('teacher_id', $user_id)->findAll();
+            $teacherCourses = $courseModel->where('teacher_id', $user_id)->findAll();
+            $data['teacherCourses'] = $teacherCourses;
 
-            // All active students (not deleted)
+            // All students
             $data['students'] = $userModel
                 ->where('role', 'student')
-                ->groupStart()
-                    ->where('is_deleted', 0)
-                    ->orWhere('is_deleted', null)
-                ->groupEnd()
                 ->findAll();
+
+            // Pending enrollments awaiting this teacher's approval
+            $data['pendingEnrollments'] = $enrollModel->getPendingForTeacher($user_id);
+
+            $data['activeEnrollments'] = $enrollModel->getActiveForTeacher($user_id);
+
+            // Current academic school year (for My Courses School Year column fallback)
+            $setting                = $settingModel->first();
+            $data['currentSchoolYear'] = $setting['current_school_year'] ?? null;
         }
 
         // 🧩 Student Dashboard Logic
@@ -155,7 +208,7 @@ class Auth extends BaseController
 
             // Get enrolled courses
             $enrolledCourses = $enrollModel->getUserEnrollments($user_id);
-            $enrolledIds = array_column($enrolledCourses, 'course_id');
+            $enrolledIds     = array_column($enrolledCourses, 'course_id');
 
             // Get available courses
             if (count($enrolledIds) > 0) {
@@ -168,7 +221,7 @@ class Auth extends BaseController
             $data['availableCourses'] = $availableCourses;
         }
 
-        // 🧩 Admin, Teacher, or Student
+        // 🧩 Admin, Teacher, or Student - unified dashboard view
         return view('auth/dashboard', $data);
     }
 }
